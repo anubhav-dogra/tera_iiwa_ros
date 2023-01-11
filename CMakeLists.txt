@@ -13,8 +13,8 @@ find_package(catkin REQUIRED COMPONENTS
   sensor_msgs
   std_msgs
   geometry_msgs
+  message_generation
 )
-
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 
@@ -49,8 +49,8 @@ find_package(catkin REQUIRED COMPONENTS
 ##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
 
 ## Generate messages in the 'msg' folder
-# add_message_files(
-#   FILES
+#add_message_files(
+ #    FILES
 #   Message1.msg
 #   Message2.msg
 # )
@@ -104,14 +104,19 @@ find_package(catkin REQUIRED COMPONENTS
 ## LIBRARIES: libraries you create in this project that dependent projects also need
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
-catkin_package(CATKIN_DEPENDS roscpp message_runtime geometry_msgs std_msgs sensor_msgs)
 
-#catkin_package(
+
+catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES tera_iiwa_ros
-#  CATKIN_DEPENDS roscpp rospy sensor_msgs std_msgs
+  CATKIN_DEPENDS
+     roscpp
+     rospy 
+     sensor_msgs 
+     std_msgs
+     message_runtime
 #  DEPENDS system_lib
-#)
+)
 
 ###########
 ## Build ##
@@ -138,6 +143,7 @@ include_directories(
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
  add_executable(get_plot_data src/get_plot_data.cpp)
+ add_dependencies(get_plot_data iiwa_driver_generate_messages_cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
