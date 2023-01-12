@@ -13,7 +13,7 @@ find_package(catkin REQUIRED COMPONENTS
   sensor_msgs
   std_msgs
   geometry_msgs
-  message_generation
+  iiwa_driver
 )
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -114,7 +114,6 @@ catkin_package(
      rospy 
      sensor_msgs 
      std_msgs
-     message_runtime
 #  DEPENDS system_lib
 )
 
@@ -125,7 +124,7 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
-# include
+  #include
   ${catkin_INCLUDE_DIRS}
 )
 
@@ -143,7 +142,7 @@ include_directories(
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
  add_executable(get_plot_data src/get_plot_data.cpp)
- add_dependencies(get_plot_data iiwa_driver_generate_messages_cpp)
+ add_dependencies(get_plot_data ${catkin_EXPORTED_TARGETS})
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -173,7 +172,10 @@ include_directories(
 #   scripts/my_python_script
 #   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 # )
-
+catkin_install_python(PROGRAMS
+   src/get_plot_data.py 
+   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
 ## Mark executables for installation
 ## See http://docs.ros.org/melodic/api/catkin/html/howto/format1/building_executables.html
 # install(TARGETS ${PROJECT_NAME}_node
