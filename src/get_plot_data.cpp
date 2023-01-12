@@ -1,6 +1,6 @@
 #include "ros/ros.h"
 #include "iiwa_driver/AdditionalOutputs.h"
-#include "iiwa_tools/GetFK.h"
+#include <iiwa_tools/GetFK.h>
 #include "sensor_msgs/JointState.h"
 
 sensor_msgs::JointState joint_positions;
@@ -35,6 +35,7 @@ int main(int argc, char **argv){
     ros::Subscriber sub_joint_states = nh.subscribe("/iiwa/joint_states", 10, iiwa_jointstates_callback);
     ros::ServiceClient client = nh.serviceClient<iiwa_tools::GetFK>("/iiwa/iiwa_fk_server");
     iiwa_tools::GetFK srv_get_fk;
+    std::cout << joint_positions.position[0] << std::endl;
 
 
     ros::waitForShutdown();
