@@ -6,13 +6,37 @@
 #include "std_msgs/MultiArrayDimension.h"
 #include "std_msgs/MultiArrayLayout.h"
 #include "std_msgs/Float64MultiArray.h"
-
+#include <Eigen/Eigen>
 double joint_positions_[6];
 double joint_velocities_[6];
-
+Eigen::VectorXd ext_torques(7);
 int n;
+using namespace std;
+Eigen::MatrixXd J(6,7);
+
 ros::ServiceClient *fk_clientPtr;
 ros::ServiceClient *J_clientPtr;
+ros::Publisher pub_ee_wrench;
+template <class MatT>
+Eigen::Matrix<typename MatT::Scalar, MatT::ColsAtCompileTime, MatT::RowsAtCompileTime> pseudo_inverse(const MatT& mat, typename MatT::Scalar tolerance = typename MatT::Scalar{1e-4}) // choose appropriately
+{
+    typedef typename MatT::Scalar Scalar;
+    auto svd = mat.jacobiSvd(Eigen::ComputeFullU | Eigen::ComputeFullV);
+    const auto& singularValues = svd.singularValues();
+    Eigen::Matrix<Scalar, MatT::ColsAtCompileTime, MatT::RowsAtCompileTime> singularValuesInv(mat.cols(), mat.rows());
+    singularValuesInv.setZero();
+    for (unsigned int i = 0; i < singularValues.size(); ++i) {
+        if (singularValues(i) > tolerance) {
+            singularValuesInv(i, i) = Scalar{1} / singularValues(i);
+        }
+        else {
+            singularValuesInv(i, i) = Scalar{0};
+        }
+    }
+    return svd.matrixV() * singularValuesInv * svd.matrixU().adjoint();
+}   
+    
+
 // Helper function to set value in a MultiArray
 void set_multi_array(std_msgs::Float64MultiArray& array, size_t i, size_t j, double val)
 {
@@ -21,9 +45,25 @@ void set_multi_array(std_msgs::Float64MultiArray& array, size_t i, size_t j, dou
 
     array.data[offset + i * array.layout.dim[0].stride + j] = val;
 }
-void iiwa_output_callback(iiwa_driver::AdditionalOutputs incoming_msg){
-     
-    std::cout << incoming_msg.commanded_torques << std::endl;
+//void iiwa_output_callback(iiwa_driver::AdditionalOutputs incoming_msg){
+void iiwa_output_callback(std_msgs::Float64MultiArray incoming_msg){
+    std::vector<double> command_tor = incoming_msg.data;
+    for (int i = 0; i < ext_torques.size(); i++)
+    {
+       std::cout << "i:::" << i<< incoming_msg.data[i] << std::endl;
+       
+       //ext_torques[i] = command_tor[i];
+    }
+    
+        
+   
+    //std::cout << incoming_msg.data[i] << std::endl;
+    //const Eigen::MatrixXd J_t_pinv = pseudo_inverse(J.transpose());
+    //Eigen::VectorXd external_ee_wrench = J_t_pinv*ext_torques;
+    // Eigen::VectorXd external_ee_wrench = J*ext_torques;
+
+    //pub_ee_wrench.publish()
+    std::cout << ext_torques << std::endl;
     //incoming_msg.external_torques;
     //incoming_msg.commanded_positions;
 
@@ -81,12 +121,29 @@ void iiwa_jointstates_callback(sensor_msgs::JointState inflow_j_states){
     if (J_clientPtr->call(get_J_srv))
     {
        //ROS_INFO("Jacobian: " get_J_srv.response.jacobian.data[0]);
-       std::cout << get_J_srv.response.jacobian << std::endl;
+       //std::cout << get_J_srv.response.jacobian << std::endl;
     }
     else
     {
         ROS_ERROR("Failed to call service iiwa_jacobian_server");
     }
+    std::vector<double> j_data = get_J_srv.response.jacobian.data;
+    int count = 0;
+    for (int i = 0; i < 6; i++)
+    {
+        for (int j = 0; j < 7; j++)
+        {
+         J(i,j) = j_data[count];
+         
+         //std::cout<< i << ":::"<< j << ":::"<< J(i,j) << std::endl;
+         count++;
+         
+        }
+        
+    }
+    cout << J << endl;
+    
+    
 }
 int main(int argc, char **argv){
     ros::init(argc, argv, "get_plot_data");
@@ -101,9 +158,8 @@ int main(int argc, char **argv){
     ros::ServiceClient J_client = nh.serviceClient<iiwa_tools::GetJacobian>("/iiwa/iiwa_jacobian_server");
     J_clientPtr = &J_client;
     J_client.waitForExistence();
-
-    ros::Subscriber sub_add = nh.subscribe("/additional_outputs", 100, iiwa_output_callback);
     ros::Subscriber sub_joint_states = nh.subscribe("/iiwa/joint_states", 100, iiwa_jointstates_callback);
+    ros::Subscriber sub_add = nh.subscribe("/iiwa/CartesianImpedance_trajectory_controller/commanded_torques", 100, iiwa_output_callback);
 
 
 
