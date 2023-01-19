@@ -7,12 +7,18 @@
 #include "std_msgs/MultiArrayLayout.h"
 #include "std_msgs/Float64MultiArray.h"
 #include <Eigen/Eigen>
+#include <eigen_conversions/eigen_msg.h>
+//#include <tf/tf.h>
+#include <geometry_msgs/Wrench.h>
+
 double joint_positions_[6];
 double joint_velocities_[6];
 Eigen::VectorXd ext_torques(7);
 int n;
 using namespace std;
 Eigen::MatrixXd J(6,7);
+Eigen::MatrixXd Ext_torq(7,1);
+geometry_msgs::Wrench eef_wrench;
 
 ros::ServiceClient *fk_clientPtr;
 ros::ServiceClient *J_clientPtr;
@@ -47,23 +53,39 @@ void set_multi_array(std_msgs::Float64MultiArray& array, size_t i, size_t j, dou
 }
 //void iiwa_output_callback(iiwa_driver::AdditionalOutputs incoming_msg){
 void iiwa_output_callback(std_msgs::Float64MultiArray incoming_msg){
+    //cout<< "im in" <<endl;
     std::vector<double> command_tor = incoming_msg.data;
-    for (int i = 0; i < ext_torques.size(); i++)
-    {
-       std::cout << "i:::" << i<< incoming_msg.data[i] << std::endl;
+    // for (int i = 0; i < ext_torques.size(); i++)
+    // {
+    //    std::cout << "i:::" << i<< command_tor[i] << std::endl;
        
-       //ext_torques[i] = command_tor[i];
+    //    //ext_torques[i] = command_tor[i];
+    // }
+    int count=0;
+    for (int i = 0; i < 7; i++)
+    {
+        for (int j = 0; j < 1; j++)
+        {
+         Ext_torq(i,j) = command_tor[count];
+         
+         //std::cout<< i << ":::"<< j << ":::"<< J(i,j) << std::endl;
+         count++;
+         
+        }
+        
     }
     
         
    
-    //std::cout << incoming_msg.data[i] << std::endl;
-    //const Eigen::MatrixXd J_t_pinv = pseudo_inverse(J.transpose());
-    //Eigen::VectorXd external_ee_wrench = J_t_pinv*ext_torques;
+    //std::cout << Ext_torq << std::endl;
+    const Eigen::MatrixXd J_t_pinv = pseudo_inverse(J.transpose());
+    
+    Eigen::VectorXd external_ee_wrench = J_t_pinv*Ext_torq;
+    //tf::wrenchEigenToMsg(external_ee_wrench, eef_wrench);
     // Eigen::VectorXd external_ee_wrench = J*ext_torques;
-
+    cout << "eef_wrench=" << external_ee_wrench << endl;
     //pub_ee_wrench.publish()
-    std::cout << ext_torques << std::endl;
+    //std::cout << ext_torques << std::endl;
     //incoming_msg.external_torques;
     //incoming_msg.commanded_positions;
 
@@ -141,7 +163,7 @@ void iiwa_jointstates_callback(sensor_msgs::JointState inflow_j_states){
         }
         
     }
-    cout << J << endl;
+    //cout << J << endl;
     
     
 }
