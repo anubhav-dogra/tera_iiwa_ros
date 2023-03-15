@@ -15,6 +15,9 @@ find_package(catkin REQUIRED COMPONENTS
   geometry_msgs
   iiwa_driver
   iiwa_tools
+  iiwa14_rs_tool_manipulator_ikfast_plugin
+  moveit_core
+  pluginlib
 )
 ## System dependencies are found with CMake's conventions
 #find_package(Boost REQUIRED COMPONENTS system)
@@ -116,6 +119,9 @@ catkin_package(
      rospy 
      sensor_msgs 
      std_msgs
+     moveit_core
+     iiwa14_rs_tool_manipulator_ikfast_plugin
+     pluginlib
   DEPENDS
     EIGEN3
 #  DEPENDS system_lib
@@ -148,9 +154,11 @@ include_directories(
 ## The recommended prefix ensures that target names across packages don't collide
  add_executable(get_plot_data src/get_plot_data.cpp)
  add_executable(plan_send_cartesian_commands src/plan_send_cartesian_commands.cpp)
+ add_executable(check_ik src/check_ik.cpp)
  
  add_dependencies(get_plot_data ${catkin_EXPORTED_TARGETS})
  add_dependencies(plan_send_cartesian_commands ${catkin_EXPORTED_TARGETS})
+ add_dependencies(check_ik ${catkin_EXPORTED_TARGETS})
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -165,6 +173,8 @@ include_directories(
 ## Specify libraries to link a library or executable target against
  target_link_libraries(get_plot_data ${catkin_LIBRARIES})
  target_link_libraries(plan_send_cartesian_commands ${catkin_LIBRARIES})
+ target_link_libraries(check_ik ${catkin_LIBRARIES})
+#  target_link_libraries(iiwa14_rs_tool_manipulator_ikfast_plugin ${catkin_LIBRARIES})
 
 #############
 ## Install ##
