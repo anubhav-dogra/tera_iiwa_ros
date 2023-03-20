@@ -1,11 +1,11 @@
 #include "ros/ros.h"
 
-#include <pluginlib/class_loader.h>
-#include <moveit/kinematics_base/kinematics_base.h>
+#include "iiwa_tools/GetIK.h"
+#include "std_msgs/MultiArrayDimension.h"
 
-std::vector<double> seed;
-std::vector<double> ik_solution;
-std::vector<geometry_msgs::Pose> pose;
+geometry_msgs::Pose target_pose;
+//std::vector<geometry_msgs::Pose> target_poses = {target_pose};
+
 ros::ServiceClient *ik_clientPtr;
 
 int main(int argc, char** argv)
@@ -14,14 +14,38 @@ int main(int argc, char** argv)
     ros::NodeHandle nh;
     ros::AsyncSpinner spinner(0);
     spinner.start();
-    pluginlib::ClassLoader<kinematics::KinematicsBase> ikfast_loader("moveit_core","kinematics::KinematicsBase");
-    try{
-        boost::shared_ptr<kinematics::KinematicsBase>
-        ikfast(ikfast_loader.createClassInstance("iiwa14_rs_tool_manipulator/IKFastKinematicsPlugin"));
-        ikfast->initialize("robot_description","manipulator","iiwa_link_0", "tool_link_ee", 0.005);
+    geometry_msgs::Pose target_pose;
+    target_pose.position.x =       0.3750;
+    target_pose.position.y =       0.3300;
+    target_pose.position.z =       0.3000;
+    target_pose.orientation.x =    -0.7073;
+    target_pose.orientation.y =    0.7068;
+    target_pose.orientation.z =    0.0016;
+    target_pose.orientation.w =    0.0016;
+
+    ROS_INFO("Into the Check IK Node");
+    ros::ServiceClient ik_client = nh.serviceClient<iiwa_tools::GetIK>("/iiwa/iiwa_ik_server");
+    ik_clientPtr = &ik_client;
+    ik_client.waitForExistence();
+    iiwa_tools::GetIK ik_serv;
+
+    ik_serv.request.poses = {target_pose};
+    ik_serv.request.seed_angles.layout.dim.resize(2);
+    ik_serv.request.seed_angles.layout.dim[0].size = 1;
+    ik_serv.request.seed_angles.layout.dim[1].size = 7;    
+    ik_serv.request.seed_angles.data = {0., 0., 0., 0., 0., 0., 0.};
+
+    if (ik_clientPtr->call(ik_serv)){
+        std::vector<double> joint_values = ik_serv.response.joints.data;
+         
+        for (int i = 0; i < joint_values.size(); i++)
+        {
+            std::cout << "iiwa_joint_" << i << ":" << "" << joint_values[i] <<std::endl;
+        }
     }
-    catch (pluginlib::PluginlibException& ex) {
-        ROS_FATAL("Unable to load plugin: %s", ex.what());
+    else{
+        ROS_ERROR("Failed to call service iiwa_ik_server");
     }
+       
     ros::waitForShutdown();
 }
