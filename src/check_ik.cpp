@@ -20,9 +20,9 @@ int count_ = 0;
 void states_(sensor_msgs::JointState msg_states){
     current_joint_pos = msg_states.position;
 }
-void states_fake(sensor_msgs::JointState msg_fake_states){
-    updated_joint_pos = msg_fake_states.position;
-}
+// void states_fake(sensor_msgs::JointState msg_fake_states){
+//     updated_joint_pos = msg_fake_states.position;
+// }
 void ref_pose_cb(geometry_msgs::PoseStamped msg){
     geometry_msgs::PoseStamped ref_pose_ = msg;
     ref_pose_.header.frame_id = "world";
@@ -41,7 +41,7 @@ void ref_pose_cb(geometry_msgs::PoseStamped msg){
             // ik_serv.request.seed_angles.data.push_back(0);//{0., 0., 0., 0., 0., 0., 0.};
             
         }   
-        std::cout << "seeded0" << "--" << current_joint_pos[3] <<std::endl;
+        // std::cout << "seeded0" << "--" << current_joint_pos[3] <<std::endl;
     }
     else{
         for(int i =0; i < 7; i++){
@@ -50,7 +50,7 @@ void ref_pose_cb(geometry_msgs::PoseStamped msg){
             // ik_serv.request.seed_angles.data.push_back(0);//{0., 0., 0., 0., 0., 0., 0.};
             
         } 
-        std::cout << "seeded" << "--" << updated_joint_pos[3] <<std::endl;
+        // std::cout << "seeded" << "--" << updated_joint_pos[3] <<std::endl;
 
     }
     joint_state_from_ik.header.stamp = ros::Time::now();
@@ -63,7 +63,7 @@ void ref_pose_cb(geometry_msgs::PoseStamped msg){
     if (ik_clientPtr->call(ik_serv)){
         std::vector<double> joint_values = ik_serv.response.joints.data;
         joint_state_from_ik.position = ik_serv.response.joints.data;
-        // updated_joint_pos = ik_serv.response.joints.data;
+        updated_joint_pos = ik_serv.response.joints.data;
         // std::cout << "updated" << "--" << updated_joint_pos[3] <<std::endl;
         
          
@@ -100,7 +100,7 @@ int main(int argc, char** argv)
     ros::ServiceClient ik_client = nh.serviceClient<iiwa_tools::GetIK>("/iiwa/iiwa_ik_server");
     ik_clientPtr = &ik_client;
     ik_client.waitForExistence();
-    ros::Subscriber sub_fake_states_ = nh.subscribe("/joint_states_from_ik", 1, states_fake);
+    // ros::Subscriber sub_fake_states_ = nh.subscribe("/joint_states_from_ik", 1, states_fake);
     ros::Subscriber sub_states_ = nh.subscribe("/iiwa/joint_states", 1, states_);
     ros::Subscriber sub = nh.subscribe("/cartesian_trajectory_generator/ref_pose", 1, ref_pose_cb);
     // iiwa_tools::GetIK ik_serv;
@@ -122,7 +122,7 @@ int main(int argc, char** argv)
     // else{
     //     ROS_ERROR("Failed to call service iiwa_ik_server");
     // }
-    pub = nh.advertise<sensor_msgs::JointState>("/joint_states_from_ik",100);
+    pub = nh.advertise<sensor_msgs::JointState>("/joint_states_from_ik",1);
        
     ros::waitForShutdown();
 }
