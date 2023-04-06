@@ -155,10 +155,12 @@ include_directories(
  add_executable(get_plot_data src/get_plot_data.cpp)
  add_executable(plan_send_cartesian_commands src/plan_send_cartesian_commands.cpp)
  add_executable(check_ik src/check_ik.cpp)
+ add_executable(eye_in_hand src/eye_in_hand.cpp)
  
  add_dependencies(get_plot_data ${catkin_EXPORTED_TARGETS})
  add_dependencies(plan_send_cartesian_commands ${catkin_EXPORTED_TARGETS})
  add_dependencies(check_ik ${catkin_EXPORTED_TARGETS})
+ add_dependencies(eye_in_hand ${catkin_EXPORTED_TARGETS})
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -174,6 +176,7 @@ include_directories(
  target_link_libraries(get_plot_data ${catkin_LIBRARIES})
  target_link_libraries(plan_send_cartesian_commands ${catkin_LIBRARIES})
  target_link_libraries(check_ik ${catkin_LIBRARIES})
+ target_link_libraries(eye_in_hand ${catkin_LIBRARIES})
 #  target_link_libraries(iiwa14_rs_tool_manipulator_ikfast_plugin ${catkin_LIBRARIES})
 
 #############
