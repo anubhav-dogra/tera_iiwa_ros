@@ -15,7 +15,7 @@ find_package(catkin REQUIRED COMPONENTS
   geometry_msgs
   iiwa_driver
   iiwa_tools
-  iiwa14_rs_tool_manipulator_ikfast_plugin
+  # iiwa14_rs_tool_manipulator_ikfast_plugin
   moveit_core
   pluginlib
 )
@@ -120,7 +120,7 @@ catkin_package(
      sensor_msgs 
      std_msgs
      moveit_core
-     iiwa14_rs_tool_manipulator_ikfast_plugin
+    #  iiwa14_rs_tool_manipulator_ikfast_plugin
      pluginlib
   DEPENDS
     EIGEN3
