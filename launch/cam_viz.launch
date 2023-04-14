@@ -1,0 +1,26 @@
+<launch>
+  <arg name="align_depth"       default="true"/>
+  <arg name="filters"           default="pointcloud"/>
+
+  <arg name="rtabmap_args"      default="delete_db_on_start"/>
+  <arg name="depth_topic"       default="/camera/aligned_depth_to_color/image_raw"/>
+  <arg name="rgb_topic"         default="/camera/color/image_raw"/>
+  <arg name="camera_info_topic" default="/camera/color/camera_info"/>
+  <arg name="approx_sync"       default="false"/>
+
+
+  <include file="$(find realsense2_camera)/launch/rs_camera.launch" >
+    <arg name="align_depth" value="$(arg align_depth)"/>
+    <arg name="filters"     value="$(arg filters)"/>
+  </include>
+
+
+  <include file="$(find cartesian_trajectory_generator)/launch/trajectory_generator.launch">
+  </include>
+
+  <include file="$(find cartesian_trajectory_generator)/launch/publisher_demo.launch">
+  </include>
+
+
+
+</launch>

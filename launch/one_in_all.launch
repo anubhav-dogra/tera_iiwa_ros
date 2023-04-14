@@ -15,6 +15,11 @@
   </include> -->
 
 
+
+  <!-- <include file="$(find tera_iiwa_ros)/launch/filters_on_camera.launch">
+  </include> -->
+
+
   <node
     pkg="tera_iiwa_ros"
     type="eye_in_hand"
@@ -23,8 +28,7 @@
 
   <!-- Node for Region Detection -->
      
-  <include file="$(find pcl_tester)/launch/filters_on_camera.launch">
-  </include>
+
 
   <node 
     pkg="cv_trials"
@@ -33,7 +37,7 @@
     output="screen"/>
 
   <node
-    pkg="testing"
+    pkg="tera_iiwa_ros"
     type="ComputePoses"
     name="ComputePoses"
     output="screen"  />
@@ -45,9 +49,15 @@
     output="screen"/>
   
   <node
-    pkg="testing"
+    pkg="tera_iiwa_ros"
     type="tf_listener_test"
     name="tf_listener_test"
+    output="screen"  />
+
+  <node
+    pkg="tera_iiwa_ros"
+    type="send_new_goals"
+    name="send_new_goals"
     output="screen"  />
   
   <!-- <node

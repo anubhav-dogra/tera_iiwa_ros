@@ -18,6 +18,13 @@ find_package(catkin REQUIRED COMPONENTS
   # iiwa14_rs_tool_manipulator_ikfast_plugin
   moveit_core
   pluginlib
+  pcl_ros
+  pcl_conversions
+  tf2
+  tf2_ros
+  tf2_eigen
+  tf2_geometry_msgs
+  tf_conversions
 )
 ## System dependencies are found with CMake's conventions
 #find_package(Boost REQUIRED COMPONENTS system)
@@ -122,6 +129,7 @@ catkin_package(
      moveit_core
     #  iiwa14_rs_tool_manipulator_ikfast_plugin
      pluginlib
+     tf2_geometry_msgs
   DEPENDS
     EIGEN3
 #  DEPENDS system_lib
@@ -156,11 +164,18 @@ include_directories(
  add_executable(plan_send_cartesian_commands src/plan_send_cartesian_commands.cpp)
  add_executable(check_ik src/check_ik.cpp)
  add_executable(eye_in_hand src/eye_in_hand.cpp)
+ add_executable(send_new_goals src/send_new_goals.cpp)
+ add_executable(ComputePoses src/ComputePoses.cpp)
+ add_executable(tf_listener_test src/tf_listener_test.cpp)
  
  add_dependencies(get_plot_data ${catkin_EXPORTED_TARGETS})
  add_dependencies(plan_send_cartesian_commands ${catkin_EXPORTED_TARGETS})
  add_dependencies(check_ik ${catkin_EXPORTED_TARGETS})
  add_dependencies(eye_in_hand ${catkin_EXPORTED_TARGETS})
+ add_dependencies(send_new_goals ${catkin_EXPORTED_TARGETS})
+ add_dependencies(ComputePoses ${catkin_EXPORTED_TARGETS})
+ add_dependencies(tf_listener_test ${catkin_EXPORTED_TARGETS})
+ 
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -177,6 +192,9 @@ include_directories(
  target_link_libraries(plan_send_cartesian_commands ${catkin_LIBRARIES})
  target_link_libraries(check_ik ${catkin_LIBRARIES})
  target_link_libraries(eye_in_hand ${catkin_LIBRARIES})
+ target_link_libraries(send_new_goals ${catkin_LIBRARIES})
+ target_link_libraries(ComputePoses ${catkin_LIBRARIES})
+ target_link_libraries(tf_listener_test ${catkin_LIBRARIES})
 #  target_link_libraries(iiwa14_rs_tool_manipulator_ikfast_plugin ${catkin_LIBRARIES})
 
 #############
