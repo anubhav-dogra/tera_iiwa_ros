@@ -10,6 +10,10 @@
 #include <eigen_conversions/eigen_msg.h>
 //#include <tf/tf.h>
 #include <geometry_msgs/Wrench.h>
+#include <tf_conversions/tf_eigen.h>
+#include <tf/transform_broadcaster.h>
+#include "tf/transform_listener.h"
+#include <tf_conversions/tf_eigen.h>
 
 double joint_positions_[6];
 double joint_velocities_[6];
@@ -19,6 +23,9 @@ using namespace std;
 Eigen::MatrixXd J(6,7);
 Eigen::MatrixXd Ext_torq(7,1);
 geometry_msgs::Wrench eef_wrench;
+Eigen::Matrix<double, 6, 1> cartesian_wrench_;
+
+
 
 ros::ServiceClient *fk_clientPtr;
 ros::ServiceClient *J_clientPtr;
@@ -51,6 +58,34 @@ void set_multi_array(std_msgs::Float64MultiArray& array, size_t i, size_t j, dou
 
     array.data[offset + i * array.layout.dim[0].stride + j] = val;
 }
+
+
+bool transformWrench(Eigen::Matrix<double, 6, 1> cartesian_wrench,
+                                                        const std::string &from_frame, const std::string &to_frame)  {
+    try
+    {
+      tf::StampedTransform transform; tf::TransformListener tf_listener_;
+      tf_listener_.waitForTransform(to_frame,from_frame,ros::Time(), ros::Duration(0.5));
+      tf_listener_.lookupTransform(to_frame, from_frame, ros::Time(0), transform);
+      tf::Vector3 v_f(cartesian_wrench(3), cartesian_wrench(4), cartesian_wrench(5));
+      tf::Vector3 v_t(cartesian_wrench(0), cartesian_wrench(1), cartesian_wrench(2));
+      tf::Vector3 v_f_rot = tf::quatRotate(transform.getRotation(), v_f);
+      tf::Vector3 v_t_rot = tf::quatRotate(transform.getRotation(), v_t);
+      cartesian_wrench_(0) =  v_f_rot[0]; // beacause eigentowrench will reverse this
+      cartesian_wrench_(1) =  v_f_rot[1];
+      cartesian_wrench_(2) =  v_f_rot[2];
+      cartesian_wrench_(3) =  v_t_rot[0];
+      cartesian_wrench_(4) =  v_t_rot[1];
+      cartesian_wrench_(5) =  v_t_rot[2];
+      return true;
+    }
+    catch (const tf::TransformException &ex)
+    {
+      ROS_ERROR_THROTTLE(1, "%s", ex.what());
+      return false;
+    }
+  }
+
 //void iiwa_output_callback(iiwa_driver::AdditionalOutputs incoming_msg){
 void iiwa_output_callback(std_msgs::Float64MultiArray incoming_msg){
     //cout<< "im in" <<endl;
@@ -81,10 +116,21 @@ void iiwa_output_callback(std_msgs::Float64MultiArray incoming_msg){
     const Eigen::MatrixXd J_t_pinv = pseudo_inverse(J.transpose());
     
     Eigen::VectorXd external_ee_wrench = J_t_pinv*Ext_torq;
-    //tf::wrenchEigenToMsg(external_ee_wrench, eef_wrench);
+    Eigen::Matrix<double, 6, 1> cartesian_wrench;
+    for (size_t i = 0; i < 6; i++)
+    {
+       cartesian_wrench(i) =  external_ee_wrench[i];
+    }
+
+    
     // Eigen::VectorXd external_ee_wrench = J*ext_torques;
-    cout << "eef_wrench=" << external_ee_wrench << endl;
-    //pub_ee_wrench.publish()
+    // cout << "eef_wrench=" << external_ee_wrench << endl;
+    // cout << "cartesian_wrench=" << cartesian_wrench << endl;
+    transformWrench(cartesian_wrench, "world", "tool_link_ee");
+    // cout << "cartesian_wrench_new" << cartesian_wrench_ << endl;
+    tf::wrenchEigenToMsg(cartesian_wrench_, eef_wrench);
+
+    pub_ee_wrench.publish(eef_wrench);
     //std::cout << ext_torques << std::endl;
     //incoming_msg.external_torques;
     //incoming_msg.commanded_positions;
@@ -182,6 +228,7 @@ int main(int argc, char **argv){
     J_client.waitForExistence();
     ros::Subscriber sub_joint_states = nh.subscribe("/iiwa/joint_states", 100, iiwa_jointstates_callback);
     ros::Subscriber sub_add = nh.subscribe("/iiwa/CartesianImpedance_trajectory_controller/commanded_torques", 100, iiwa_output_callback);
+    pub_ee_wrench = nh.advertise<geometry_msgs::Wrench>("/cartesian_wrench",1);
 
 
 

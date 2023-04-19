@@ -60,9 +60,9 @@
     name="send_new_goals"
     output="screen"  />
   
-  <!-- <node
-    pkg="testing"
-    type="start_pose_service"
-    name="start_pose_service"
-    output="screen"  /> -->
+  <node
+    pkg="tera_iiwa_ros"
+    type="get_plot_data"
+    name="get_plot_data"
+    output="screen"  />
 </launch>
