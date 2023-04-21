@@ -15,15 +15,15 @@
 #include "tf/transform_listener.h"
 #include <tf_conversions/tf_eigen.h>
 
-double joint_positions_[6];
-double joint_velocities_[6];
-Eigen::VectorXd ext_torques(7);
-int n;
+static double joint_positions_[6];
+static double joint_velocities_[6];
+static Eigen::VectorXd ext_torques(7);
+static int n;
 using namespace std;
-Eigen::MatrixXd J(6,7);
-Eigen::MatrixXd Ext_torq(7,1);
-geometry_msgs::Wrench eef_wrench;
-Eigen::Matrix<double, 6, 1> cartesian_wrench_;
+static Eigen::MatrixXd J(6,7);
+static Eigen::MatrixXd Ext_torq(7,1);
+static geometry_msgs::Wrench eef_wrench;
+static Eigen::Matrix<double, 6, 1> cartesian_wrench_;
 
 
 
@@ -126,9 +126,9 @@ void iiwa_output_callback(std_msgs::Float64MultiArray incoming_msg){
     // Eigen::VectorXd external_ee_wrench = J*ext_torques;
     // cout << "eef_wrench=" << external_ee_wrench << endl;
     // cout << "cartesian_wrench=" << cartesian_wrench << endl;
-    transformWrench(cartesian_wrench, "world", "tool_link_ee");
+    //transformWrench(cartesian_wrench, "world", "tool_link_ee");
     // cout << "cartesian_wrench_new" << cartesian_wrench_ << endl;
-    tf::wrenchEigenToMsg(cartesian_wrench_, eef_wrench);
+    tf::wrenchEigenToMsg(cartesian_wrench, eef_wrench);
 
     pub_ee_wrench.publish(eef_wrench);
     //std::cout << ext_torques << std::endl;

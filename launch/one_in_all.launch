@@ -60,9 +60,9 @@
     name="send_new_goals"
     output="screen"  />
   
-  <node
+  <!-- <node
     pkg="tera_iiwa_ros"
     type="get_plot_data"
     name="get_plot_data"
-    output="screen"  />
+    output="screen"  /> -->
 </launch>
