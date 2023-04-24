@@ -9,21 +9,21 @@
 #include <Eigen/Eigen>
 #include <eigen_conversions/eigen_msg.h>
 //#include <tf/tf.h>
-#include <geometry_msgs/Wrench.h>
+#include <geometry_msgs/WrenchStamped.h>
 #include <tf_conversions/tf_eigen.h>
 #include <tf/transform_broadcaster.h>
 #include "tf/transform_listener.h"
 #include <tf_conversions/tf_eigen.h>
 
-static double joint_positions_[6];
-static double joint_velocities_[6];
-static Eigen::VectorXd ext_torques(7);
-static int n;
+double joint_positions_[6];
+double joint_velocities_[6];
+Eigen::VectorXd ext_torques(7);
+int n;
 using namespace std;
-static Eigen::MatrixXd J(6,7);
-static Eigen::MatrixXd Ext_torq(7,1);
-static geometry_msgs::Wrench eef_wrench;
-static Eigen::Matrix<double, 6, 1> cartesian_wrench_;
+Eigen::MatrixXd J(6,7);
+Eigen::MatrixXd Ext_torq(7,1);
+geometry_msgs::WrenchStamped eef_wrench;
+Eigen::Matrix<double, 6, 1> cartesian_wrench_;
 
 
 
@@ -116,11 +116,12 @@ void iiwa_output_callback(std_msgs::Float64MultiArray incoming_msg){
     const Eigen::MatrixXd J_t_pinv = pseudo_inverse(J.transpose());
     
     Eigen::VectorXd external_ee_wrench = J_t_pinv*Ext_torq;
-    Eigen::Matrix<double, 6, 1> cartesian_wrench;
-    for (size_t i = 0; i < 6; i++)
-    {
-       cartesian_wrench(i) =  external_ee_wrench[i];
-    }
+    // Eigen::Matrix<double, 6, 1> cartesian_wrench;
+    // for (size_t i = 0; i < 6; i++)
+    // {
+    //    cartesian_wrench(i) =  external_ee_wrench[i];
+    //    std::cout << cartesian_wrench(i) << std::endl;
+    // }
 
     
     // Eigen::VectorXd external_ee_wrench = J*ext_torques;
@@ -128,8 +129,17 @@ void iiwa_output_callback(std_msgs::Float64MultiArray incoming_msg){
     // cout << "cartesian_wrench=" << cartesian_wrench << endl;
     //transformWrench(cartesian_wrench, "world", "tool_link_ee");
     // cout << "cartesian_wrench_new" << cartesian_wrench_ << endl;
-    tf::wrenchEigenToMsg(cartesian_wrench, eef_wrench);
-
+    // tf::wrenchEigenToMsg(cartesian_wrench, eef_wrench);
+    eef_wrench.header.frame_id = "iiwa_link_0";
+    eef_wrench.header.stamp = ros::Time::now();
+    eef_wrench.wrench.force.x =  external_ee_wrench[3];
+    eef_wrench.wrench.force.y =  external_ee_wrench[4];
+    eef_wrench.wrench.force.z =  external_ee_wrench[5];
+    eef_wrench.wrench.torque.x = external_ee_wrench[0];
+    eef_wrench.wrench.torque.y = external_ee_wrench[1];
+    eef_wrench.wrench.torque.z = external_ee_wrench[2];
+    // std::cout << eef_wrench.wrench.force.x << std::endl;
+ 
     pub_ee_wrench.publish(eef_wrench);
     //std::cout << ext_torques << std::endl;
     //incoming_msg.external_torques;
@@ -228,7 +238,7 @@ int main(int argc, char **argv){
     J_client.waitForExistence();
     ros::Subscriber sub_joint_states = nh.subscribe("/iiwa/joint_states", 100, iiwa_jointstates_callback);
     ros::Subscriber sub_add = nh.subscribe("/iiwa/CartesianImpedance_trajectory_controller/commanded_torques", 100, iiwa_output_callback);
-    pub_ee_wrench = nh.advertise<geometry_msgs::Wrench>("/cartesian_wrench",1);
+    pub_ee_wrench = nh.advertise<geometry_msgs::WrenchStamped>("/cartesian_wrench",1);
 
 
 

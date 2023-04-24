@@ -168,6 +168,8 @@ include_directories(
  add_executable(send_new_goals src/send_new_goals.cpp)
  add_executable(ComputePoses src/ComputePoses.cpp)
  add_executable(tf_listener_test src/tf_listener_test.cpp)
+ add_executable(wrench_transform src/wrench_transform.cpp)
+
  
  add_dependencies(get_plot_data ${catkin_EXPORTED_TARGETS})
  add_dependencies(plan_send_cartesian_commands ${catkin_EXPORTED_TARGETS})
@@ -176,6 +178,7 @@ include_directories(
  add_dependencies(send_new_goals ${catkin_EXPORTED_TARGETS})
  add_dependencies(ComputePoses ${catkin_EXPORTED_TARGETS})
  add_dependencies(tf_listener_test ${catkin_EXPORTED_TARGETS})
+ add_dependencies(wrench_transform ${catkin_EXPORTED_TARGETS})
  
 
 ## Rename C++ executable without prefix
@@ -196,6 +199,7 @@ include_directories(
  target_link_libraries(send_new_goals ${catkin_LIBRARIES})
  target_link_libraries(ComputePoses ${catkin_LIBRARIES})
  target_link_libraries(tf_listener_test ${catkin_LIBRARIES})
+ target_link_libraries(wrench_transform ${catkin_LIBRARIES})
 #  target_link_libraries(iiwa14_rs_tool_manipulator_ikfast_plugin ${catkin_LIBRARIES})
 
 #############

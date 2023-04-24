@@ -1,7 +1,7 @@
 clear all
 clc
 close all
-global initial_wrench_Fz trigger pulse pulse_rec numpoints count
+global initial_wrench_Fz pulse pulse_rec numpoints count r
 rosshutdown;
 rosinit;
 starttime=-340;
@@ -27,11 +27,10 @@ time = submit("GETTIMEAXIS",'float64',numpoints);
 time=time';
 pulse=pulse';
 count = 1;
-Init_wrench_sub = rossubscriber('/cartesian_wrench','DataFormat', 'struct');
+Init_wrench_sub = rossubscriber('/cartesian_wrench_tool','DataFormat', 'struct');
 [initial_wrench_msg,status, statustext]  = receive(Init_wrench_sub,2.0);
-initial_wrench_Fz = (initial_wrench_msg.Force.Z)
-trigger = 0;
- current_wrench_sub = rossubscriber('/cartesian_wrench',@wrenchCallback, 'DataFormat', 'struct');
+initial_wrench_Fz = (initial_wrench_msg.Wrench.Force.Z)
+current_wrench_sub = rossubscriber('/cartesian_wrench_tool',@wrenchCallback, 'DataFormat', 'struct');
 %%
 size(pulse_rec)
 close all
