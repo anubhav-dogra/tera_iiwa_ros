@@ -16,8 +16,8 @@
 
 
 
-  <!-- <include file="$(find tera_iiwa_ros)/launch/filters_on_camera.launch">
-  </include> -->
+  <include file="$(find tera_iiwa_ros)/launch/filters_on_camera.launch">
+  </include>
 
 
   <node
@@ -25,6 +25,7 @@
     type="eye_in_hand"
     name="eye_in_hand"
     output="screen"  />
+    
 
   <!-- Node for Region Detection -->
      
@@ -60,9 +61,14 @@
     name="send_new_goals"
     output="screen"  />
   
-  <!-- <node
+  <node
     pkg="tera_iiwa_ros"
     type="get_plot_data"
     name="get_plot_data"
-    output="screen"  /> -->
+    output="screen"  />
+  <node
+    pkg="tera_iiwa_ros"
+    type="wrench_transform"
+    name="wrench_transform"
+    output="screen" />
 </launch>

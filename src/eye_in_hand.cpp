@@ -87,53 +87,53 @@ int main(int argc, char **argv)
 
 
 
-    // // fixing transformation of depth to the optical frame using camera TF;
-    // geometry_msgs::TransformStamped static_transform_color_depth;
-    // static_transform_color_depth.header.stamp = ros::Time::now();
-    // static_transform_color_depth.header.frame_id = "camera_depth_optical_frame";
-    // static_transform_color_depth.child_frame_id = "camera_color_optical_frame";
-    // static_transform_color_depth.transform.translation.x = -0.015;
-    // static_transform_color_depth.transform.translation.y = -0;
-    // static_transform_color_depth.transform.translation.z = -0.001;
-    // static_transform_color_depth.transform.rotation.x = 0.002;
-    // static_transform_color_depth.transform.rotation.y = -0.002;
-    // static_transform_color_depth.transform.rotation.z = 0.015;
-    // static_transform_color_depth.transform.rotation.w = 1.0;
+    // fixing transformation of depth to the optical frame using camera TF;
+    geometry_msgs::TransformStamped static_transform_color_depth;
+    static_transform_color_depth.header.stamp = ros::Time::now();
+    static_transform_color_depth.header.frame_id = "camera_depth_optical_frame";
+    static_transform_color_depth.child_frame_id = "camera_color_optical_frame";
+    static_transform_color_depth.transform.translation.x = -0.015;
+    static_transform_color_depth.transform.translation.y = -0;
+    static_transform_color_depth.transform.translation.z = -0.001;
+    static_transform_color_depth.transform.rotation.x = 0.002;
+    static_transform_color_depth.transform.rotation.y = -0.002;
+    static_transform_color_depth.transform.rotation.z = 0.015;
+    static_transform_color_depth.transform.rotation.w = 1.0;
 
-    // tf2::Vector3 translation_color_depth(static_transform_color_depth.transform.translation.x,
-    //                                     static_transform_color_depth.transform.translation.y,
-    //                                     static_transform_color_depth.transform.translation.z);
-    // tf2::Quaternion quat_tf_color_depth;
-    // tf2::convert(static_transform_color_depth.transform.rotation, quat_tf_color_depth);
-    // quat_tf_color_depth.normalize();
-    // tf2::Transform transform_color_depth(quat_tf_color_depth,translation_color_depth);
+    tf2::Vector3 translation_color_depth(static_transform_color_depth.transform.translation.x,
+                                        static_transform_color_depth.transform.translation.y,
+                                        static_transform_color_depth.transform.translation.z);
+    tf2::Quaternion quat_tf_color_depth;
+    tf2::convert(static_transform_color_depth.transform.rotation, quat_tf_color_depth);
+    quat_tf_color_depth.normalize();
+    tf2::Transform transform_color_depth(quat_tf_color_depth,translation_color_depth);
 
-    // // Applying transformation from end-effector to the depth frame.
-    // tf2::Transform tranformed_depth_ee = transform_calib*transform_color_depth;
-    // geometry_msgs::TransformStamped static_transform_depth_ee;
-    // static_transform_depth_ee.header.stamp = ros::Time::now();
-    // static_transform_depth_ee.header.frame_id = "iiwa_link_ee";
-    // static_transform_depth_ee.child_frame_id = "camera_depth_optical_frame";
-    // static_transform_depth_ee.transform = tf2::toMsg(tranformed_depth_ee);
-
-
-    // //std::cout<<static_transform_depth_ee.transform.translation.x << "--" << static_transform_depth_ee.transform.translation.y << "--" <<
-    // //          static_transform_depth_ee.transform.translation.z << std::endl;
-    // //std::cout<<static_transform_depth_ee.transform.rotation.x << "--" << static_transform_depth_ee.transform.rotation.y << "--" <<
-    //   //        static_transform_depth_ee.transform.rotation.z << "--"<< static_transform_depth_ee.transform.rotation.w << std::endl;
+    // Applying transformation from end-effector to the depth frame.
+    tf2::Transform tranformed_depth_ee = transform_calib*transform_color_depth;
+    geometry_msgs::TransformStamped static_transform_depth_ee;
+    static_transform_depth_ee.header.stamp = ros::Time::now();
+    static_transform_depth_ee.header.frame_id = "iiwa_link_ee";
+    static_transform_depth_ee.child_frame_id = "camera_depth_optical_frame";
+    static_transform_depth_ee.transform = tf2::toMsg(tranformed_depth_ee);
 
 
-    // // Applying transformation from robot base to the depth frame.
-    // tf2::Transform transformed_base_depth = transform_base_ee*tranformed_depth_ee;
-    // geometry_msgs::TransformStamped static_transform_depth_base;
-    // static_transform_depth_base.header.stamp = ros::Time::now();
-    // static_transform_depth_base.header.frame_id = "iiwa_link_0";
-    // static_transform_depth_base.child_frame_id = "camera_depth_optical_frame";
-    // static_transform_depth_base.transform = tf2::toMsg(transformed_base_depth);
+    //std::cout<<static_transform_depth_ee.transform.translation.x << "--" << static_transform_depth_ee.transform.translation.y << "--" <<
+    //          static_transform_depth_ee.transform.translation.z << std::endl;
+    //std::cout<<static_transform_depth_ee.transform.rotation.x << "--" << static_transform_depth_ee.transform.rotation.y << "--" <<
+      //        static_transform_depth_ee.transform.rotation.z << "--"<< static_transform_depth_ee.transform.rotation.w << std::endl;
+
+
+    // Applying transformation from robot base to the depth frame.
+    tf2::Transform transformed_base_depth = transform_base_ee*tranformed_depth_ee;
+    geometry_msgs::TransformStamped static_transform_depth_base;
+    static_transform_depth_base.header.stamp = ros::Time::now();
+    static_transform_depth_base.header.frame_id = "iiwa_link_0";
+    static_transform_depth_base.child_frame_id = "camera_depth_optical_frame";
+    static_transform_depth_base.transform = tf2::toMsg(transformed_base_depth);
     
-    // //static_transform_depth_base.transform.rotation = transformStamped_calib.transform.rotation*static_transform_color_depth.transform.rotation
-    // //static_transform_depth_base.transform.rotation.normalize();
-    // static_broadcaster.sendTransform(static_transform_depth_base);
+    //static_transform_depth_base.transform.rotation = transformStamped_calib.transform.rotation*static_transform_color_depth.transform.rotation
+    //static_transform_depth_base.transform.rotation.normalize();
+    static_broadcaster.sendTransform(static_transform_depth_base);
     // //ros::spin();
      rate.sleep();
     }

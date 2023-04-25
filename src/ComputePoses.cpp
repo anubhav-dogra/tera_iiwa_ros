@@ -9,7 +9,7 @@
 #include <pcl/point_cloud.h>
 #include <pcl/point_types.h>
 #include <pcl_conversions/pcl_conversions.h>
-// #include <pcl/filters/voxel_grid.h>
+#include <pcl/filters/voxel_grid.h>
 #include <pcl/features/normal_3d.h>
 #include <pcl/filters/passthrough.h>
 // #include <pcl/filters/extract_indices.h>
@@ -35,12 +35,16 @@ void cloud_cb(const sensor_msgs::PointCloud2ConstPtr& input)
   pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_input (new pcl::PointCloud<pcl::PointXYZ>);
   pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_filtered (new pcl::PointCloud<pcl::PointXYZ>);
   pcl::fromROSMsg(*input, *cloud_input);  
-  int v_cloudsize2 = (cloud_input->width) * (cloud_input->height);
+  pcl::VoxelGrid<pcl::PointXYZ> sor;
+  sor.setInputCloud (cloud_input);
+  sor.setLeafSize (0.005f, 0.005f, 0.005f);
+  sor.filter (*cloud_filtered);
+  int v_cloudsize2 = (cloud_filtered->width) * (cloud_filtered->height);
   //for (int i = 0; i < v_cloudsize2; i++) {
   // std::cout << cloud_input->points[0] << '\n';
   //}
   pcl::NormalEstimation<pcl::PointXYZ, pcl::Normal> normal_estimation;
-	normal_estimation.setInputCloud (cloud_input);
+	normal_estimation.setInputCloud (cloud_filtered);
   pcl::search::KdTree<pcl::PointXYZ>::Ptr tree (new pcl::search::KdTree<pcl::PointXYZ>);
 	normal_estimation.setSearchMethod (tree);
   pcl::PointCloud<pcl::Normal>::Ptr cloud_normals (new pcl::PointCloud<pcl::Normal>);
@@ -50,13 +54,13 @@ void cloud_cb(const sensor_msgs::PointCloud2ConstPtr& input)
   normal_estimation.compute(*cloud_normals);
 
   //Convert to pose
-  int cloudsize = (cloud_input->width) * (cloud_input->height);
+  int cloudsize = (cloud_filtered->width) * (cloud_filtered->height);
   Eigen::Isometry3d pose = Eigen::Isometry3d::Identity();
   geometry_msgs::PoseArray output_pose_array;
   for (int i = 0; i < cloudsize; i++) {
-    pose(0,3) = cloud_input->points[i].x;
-    pose(1,3) = cloud_input->points[i].y;
-    pose(2,3) = cloud_input->points[i].z;
+    pose(0,3) = cloud_filtered->points[i].x;
+    pose(1,3) = cloud_filtered->points[i].y;
+    pose(2,3) = cloud_filtered->points[i].z;
     Eigen::Vector3d axis_normal(cloud_normals->points[i].normal_x, cloud_normals->points[i].normal_y, cloud_normals->points[i].normal_z);
     Eigen::Vector3d axis_x = cross_prod(axis_normal,Eigen::Vector3d::UnitZ());
     axis_x.normalize();
@@ -125,7 +129,7 @@ int main(int argc, char** argv) {
   ros::init(argc, argv, "ComputePoses");
   ros::NodeHandle nh;
   // create a ros subscriber from the input point cloud.
-  sub_pcloud = nh.subscribe("voxel_grid/output", 100, cloud_cb);
+  sub_pcloud = nh.subscribe("cropbox/output", 100, cloud_cb);
   pub_poses = nh.advertise<geometry_msgs::PoseArray>("pose_output", 100);
 
   ros::spin ();
