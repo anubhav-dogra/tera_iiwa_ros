@@ -1,7 +1,7 @@
 function wrenchCallback(~, current_wrench_msg)
     global count initial_wrench_Fz pulse pulse_rec numpoints t1 current_wrench_Fz_rec current_wrench_sub
     current_wrench_Fz = (current_wrench_msg.Wrench.Force.Z);
-    if (current_wrench_Fz - initial_wrench_Fz >= 3 )
+    if (current_wrench_Fz - initial_wrench_Fz >= 0.0 )
          if count  == 1
             t1 = rostime("now");
 %             t1_ = t1.Sec;
@@ -18,7 +18,7 @@ function wrenchCallback(~, current_wrench_msg)
             
             pulse = submit("GETLATESTPULSE",'float64',numpoints);
             figure(1);
-            plot(pulse')
+%             plot(pulse')
             pulse_rec(count,:) = pulse; 
             count = count+1;
 %             size(pulse_rec);
