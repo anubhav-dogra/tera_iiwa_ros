@@ -34,7 +34,7 @@ void msgCallback(const geometry_msgs::WrenchStampedConstPtr wrench_ptr)
      tf2::doTransform(wrench_ptr->wrench.force, wrench_new.wrench.force, transformation);
      tf2::doTransform(wrench_ptr->wrench.torque, wrench_new.wrench.torque, transformation);
     // Publish transformed wrench.
-    ros::Duration(0.25).sleep();
+    // ros::Duration(0.25).sleep();
     pub.publish(wrench_new);
     }
     
