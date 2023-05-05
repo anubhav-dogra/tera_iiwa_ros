@@ -36,6 +36,7 @@ void msgCallback(const geometry_msgs::WrenchStampedConstPtr wrench_ptr)
     // Publish transformed wrench.
     // ros::Duration(0.25).sleep();
     pub.publish(wrench_new);
+    pub1.publish(transformation);
     }
     
     catch (tf2::TransformException &ex){
@@ -51,6 +52,7 @@ private:
     message_filters::Subscriber<geometry_msgs::WrenchStamped> point_sub_;
     tf2_ros::MessageFilter<geometry_msgs::WrenchStamped> tf2_filter_;
     ros::Publisher pub = n_.advertise<geometry_msgs::WrenchStamped>("/cartesian_wrench_tool", 10);
+    ros::Publisher pub1 = n_.advertise<geometry_msgs::TransformStamped>("/tool_link_ee_pose", 10);
 };
 
 int main(int argc, char** argv)

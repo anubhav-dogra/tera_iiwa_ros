@@ -86,10 +86,11 @@ bool transformWrench(Eigen::Matrix<double, 6, 1> cartesian_wrench,
     }
   }
 
-//void iiwa_output_callback(iiwa_driver::AdditionalOutputs incoming_msg){
-void iiwa_output_callback(std_msgs::Float64MultiArray incoming_msg){
+void iiwa_output_callback(iiwa_driver::AdditionalOutputs incoming_msg){
+// void iiwa_output_callback(std_msgs::Float64MultiArray incoming_msg){
     //cout<< "im in" <<endl;
-    std::vector<double> command_tor = incoming_msg.data;
+    std::vector<double> ext_tor = incoming_msg.external_torques.data;
+    // std::vector<double> command_tor = incoming_msg.data;
     // for (int i = 0; i < ext_torques.size(); i++)
     // {
     //    std::cout << "i:::" << i<< command_tor[i] << std::endl;
@@ -101,7 +102,8 @@ void iiwa_output_callback(std_msgs::Float64MultiArray incoming_msg){
     {
         for (int j = 0; j < 1; j++)
         {
-         Ext_torq(i,j) = command_tor[count];
+        //  Ext_torq(i,j) = command_tor[count];
+         Ext_torq(i,j) = ext_tor[count];
          
          //std::cout<< i << ":::"<< j << ":::"<< J(i,j) << std::endl;
          count++;
@@ -237,7 +239,8 @@ int main(int argc, char **argv){
     J_clientPtr = &J_client;
     J_client.waitForExistence();
     ros::Subscriber sub_joint_states = nh.subscribe("/iiwa/joint_states", 100, iiwa_jointstates_callback);
-    ros::Subscriber sub_add = nh.subscribe("/iiwa/CartesianImpedance_trajectory_controller/commanded_torques", 100, iiwa_output_callback);
+    // ros::Subscriber sub_add = nh.subscribe("/iiwa/CartesianImpedance_trajectory_controller/commanded_torques", 100, iiwa_output_callback);
+    ros::Subscriber sub_add = nh.subscribe("/additional_outputs", 100, iiwa_output_callback);
     pub_ee_wrench = nh.advertise<geometry_msgs::WrenchStamped>("/cartesian_wrench",1);
 
 

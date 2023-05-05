@@ -1,5 +1,0 @@
-bag = rosbag('2023-05-04-15-04-21.bag');
-bSel = select(bag,'Topic','/cartesian_wrench_tool');
-msgStructs = readMessages(bSel,'DataFormat','struct');
- Fz = cellfun(@(m) double(m.Wrench.Force.Z),msgStructs);
- plot(Fz)
