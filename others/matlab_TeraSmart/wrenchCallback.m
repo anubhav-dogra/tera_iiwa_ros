@@ -1,7 +1,7 @@
 function wrenchCallback(~, current_wrench_msg)
     global count initial_wrench_Fz pulse pulse_rec numpoints t1 current_wrench_Fz_rec current_wrench_sub
     current_wrench_Fz = (current_wrench_msg.Wrench.Force.Z);
-    if (current_wrench_Fz - initial_wrench_Fz >= 0.0 )
+    if (current_wrench_Fz - initial_wrench_Fz >= 3.0 )
          if count  == 1
             t1 = rostime("now");
 %             t1_ = t1.Sec;
