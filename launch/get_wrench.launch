@@ -1,0 +1,12 @@
+<launch>
+  <node
+    pkg="tera_iiwa_ros"
+    type="get_plot_data"
+    name="get_plot_data"
+    output="screen"  />
+  <node
+    pkg="tera_iiwa_ros"
+    type="wrench_transform"
+    name="wrench_transform"
+    output="screen" />
+</launch>

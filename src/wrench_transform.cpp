@@ -26,17 +26,21 @@ void msgCallback(const geometry_msgs::WrenchStampedConstPtr wrench_ptr)
     wrench_new.header.frame_id = target_frame_;
     
     try{
-    geometry_msgs::TransformStamped transformation;
+    geometry_msgs::TransformStamped transformation, transformation_b_eef;
     transformation = buffer_.lookupTransform(target_frame_, 
                                                   wrench_ptr->header.frame_id, 
                                                   wrench_ptr->header.stamp);
+                                                  
+    transformation_b_eef = buffer_.lookupTransform("iiwa_link_0", 
+                                                  "tool_link_ee", 
+                                                  ros::Time(0));                                              
     // Apply transformation to force and torque vectors                                         
      tf2::doTransform(wrench_ptr->wrench.force, wrench_new.wrench.force, transformation);
      tf2::doTransform(wrench_ptr->wrench.torque, wrench_new.wrench.torque, transformation);
     // Publish transformed wrench.
     // ros::Duration(0.25).sleep();
     pub.publish(wrench_new);
-    pub1.publish(transformation);
+    pub1.publish(transformation_b_eef);
     }
     
     catch (tf2::TransformException &ex){

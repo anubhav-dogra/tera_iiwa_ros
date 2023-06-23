@@ -30,8 +30,8 @@ moveBindings = {
         '2': (-delta,0,0,0,0,0,0),
         '4': (0,delta,0,0,0,0,0),
         '6': (0,-delta,0,0,0,0,0),
-        '5': (0,0,0.05,0,0,0,0),
-        '0': (0,0,-0.05,0,0,0,0),
+        '5': (0,0,0.01,0,0,0,0),
+        '0': (0,0,-0.01,0,0,0,0),
         'w': (0,0,0,0,0,0,delta_r),
         'a': (0,0,0,delta_r,0,0,0),
         's': (0,0,0,0,delta_r,0,0),
@@ -98,10 +98,11 @@ def update(x, y, z, xr, yr, zr, wr, tup):
 
 def teleoperator():
     rospy.init_node('teleoperator', anonymous=True)
-    # rospy.Rate(10)
+    rospy.Rate(200)
     buffer_ = tf2_ros.Buffer()
     listerner = tf2_ros.TransformListener(buffer_)
-    publish_ = rospy.Publisher("cartesian_trajectory_generator/new_goal", PoseStamped, queue_size=1)    
+    publish_ = rospy.Publisher("cartesian_trajectory_generator/new_goal", PoseStamped, queue_size=1)
+    # pub1 = rospy.Publisher("tool_link_ee_pose_", TransformStamped, queue_size=1)  
     while not rospy.is_shutdown():      
         try:
             now = rospy.Time.now()
@@ -118,6 +119,7 @@ def teleoperator():
         _yr = transformation.transform.rotation.y
         _zr = transformation.transform.rotation.z
         _wr = transformation.transform.rotation.w
+        # pub1.publish(transformation)
 
 
         # print(_x,_y,_z,_xr,_yr,_zr,_wr)
