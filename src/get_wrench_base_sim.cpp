@@ -86,11 +86,9 @@ bool transformWrench(Eigen::Matrix<double, 6, 1> cartesian_wrench,
     }
   }
 
-void iiwa_output_callback(iiwa_driver::AdditionalOutputs incoming_msg){
-// void iiwa_output_callback(std_msgs::Float64MultiArray incoming_msg){
-    //cout<< "im in" <<endl;
-    std::vector<double> ext_tor = incoming_msg.external_torques.data;
-    // std::vector<double> command_tor = incoming_msg.data;
+void iiwa_output_callback(std_msgs::Float64MultiArray incoming_msg){
+
+    std::vector<double> command_tor = incoming_msg.data;
     // for (int i = 0; i < ext_torques.size(); i++)
     // {
     //    std::cout << "i:::" << i<< command_tor[i] << std::endl;
@@ -102,8 +100,7 @@ void iiwa_output_callback(iiwa_driver::AdditionalOutputs incoming_msg){
     {
         for (int j = 0; j < 1; j++)
         {
-        //  Ext_torq(i,j) = command_tor[count];
-         Ext_torq(i,j) = ext_tor[count];
+         Ext_torq(i,j) = command_tor[count];
          
          //std::cout<< i << ":::"<< j << ":::"<< J(i,j) << std::endl;
          count++;
@@ -125,13 +122,6 @@ void iiwa_output_callback(iiwa_driver::AdditionalOutputs incoming_msg){
     //    std::cout << cartesian_wrench(i) << std::endl;
     // }
 
-    
-    // Eigen::VectorXd external_ee_wrench = J*ext_torques;
-    // cout << "eef_wrench=" << external_ee_wrench << endl;
-    // cout << "cartesian_wrench=" << cartesian_wrench << endl;
-    //transformWrench(cartesian_wrench, "world", "tool_link_ee");
-    // cout << "cartesian_wrench_new" << cartesian_wrench_ << endl;
-    // tf::wrenchEigenToMsg(cartesian_wrench, eef_wrench);
     eef_wrench.header.frame_id = "iiwa_link_0";
     eef_wrench.header.stamp = ros::Time::now();
     eef_wrench.wrench.force.x =  external_ee_wrench[3];
@@ -164,33 +154,7 @@ void iiwa_jointstates_callback(sensor_msgs::JointState inflow_j_states){
         //  std::cout << joint_velocities_[i] << std::endl;
     
     } 
-    // // required for Inputting joint_states for GetFK
-    // std_msgs::Float64MultiArray positions_joints;
-    // positions_joints.layout.dim.resize(2);
-    // positions_joints.layout.data_offset = 0;
-    // positions_joints.layout.dim[0].size = 1;
-    // positions_joints.layout.dim[0].stride = 7;
-    // positions_joints.layout.dim[1].size = 7;
-    // positions_joints.layout.dim[1].stride = 0;
-    // positions_joints.data.resize(1*7);
-    // for (int i = 0; i < n; ++i)
-    // {
-    //     positions_joints.data[i] = joint_positions[i];     
-    // }
-    // std::cout <<  positions_joints << std::endl;
 
-    // iiwa_tools::GetFK get_fk_srv;
-    //ROS_INFO("calling the service");
-    // get_fk_srv.request.joints = positions_joints;
-    // if (fk_clientPtr->call(get_fk_srv))
-    // {
-    //    ROS_INFO("The iiwa_ee_state X: %f Y: %f, Z: %f", get_fk_srv.response.poses[0].position.x, get_fk_srv.response.poses[0].position.y, get_fk_srv.response.poses[0].position.z);
-    //    ROS_INFO("The iiwa_ee_state X.O: %f Y.O: %f, Z.O: %f, W.O: %f", get_fk_srv.response.poses[0].orientation.x, get_fk_srv.response.poses[0].orientation.y, get_fk_srv.response.poses[0].orientation.z, get_fk_srv.response.poses[0].orientation.w);
-    // }
-    // else
-    // {
-    //     ROS_ERROR("Failed to call service iiwa_fk_server");
-    // }
     iiwa_tools::GetJacobian get_J_srv;
     for (int i = 0; i < n; ++i)
     {
@@ -227,7 +191,7 @@ void iiwa_jointstates_callback(sensor_msgs::JointState inflow_j_states){
     
 }
 int main(int argc, char **argv){
-    ros::init(argc, argv, "get_plot_data");
+    ros::init(argc, argv, "get_wrench_base_sim");
     ros::NodeHandle nh;
     ros::AsyncSpinner spinner(0);
     spinner.start();
@@ -240,8 +204,7 @@ int main(int argc, char **argv){
     J_clientPtr = &J_client;
     J_client.waitForExistence();
     ros::Subscriber sub_joint_states = nh.subscribe("/iiwa/joint_states", 100, iiwa_jointstates_callback);
-    // ros::Subscriber sub_add = nh.subscribe("/iiwa/CartesianImpedance_trajectory_controller/commanded_torques", 100, iiwa_output_callback);
-    ros::Subscriber sub_add = nh.subscribe("/additional_outputs", 100, iiwa_output_callback);
+    ros::Subscriber sub_add = nh.subscribe("/iiwa/CartesianImpedance_trajectory_controller/commanded_torques", 100, iiwa_output_callback);
     pub_ee_wrench = nh.advertise<geometry_msgs::WrenchStamped>("/cartesian_wrench",1);
 
 

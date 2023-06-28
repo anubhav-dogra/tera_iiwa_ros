@@ -169,6 +169,7 @@ include_directories(
  add_executable(ComputePoses src/ComputePoses.cpp)
  add_executable(tf_listener_test src/tf_listener_test.cpp)
  add_executable(wrench_transform src/wrench_transform.cpp)
+ add_executable(get_wrench_base_sim src/get_wrench_base_sim.cpp)
 
  
  add_dependencies(get_plot_data ${catkin_EXPORTED_TARGETS})
@@ -179,6 +180,7 @@ include_directories(
  add_dependencies(ComputePoses ${catkin_EXPORTED_TARGETS})
  add_dependencies(tf_listener_test ${catkin_EXPORTED_TARGETS})
  add_dependencies(wrench_transform ${catkin_EXPORTED_TARGETS})
+ add_dependencies(get_wrench_base_sim ${catkin_EXPORTED_TARGETS})
  
 
 ## Rename C++ executable without prefix
@@ -200,6 +202,7 @@ include_directories(
  target_link_libraries(ComputePoses ${catkin_LIBRARIES})
  target_link_libraries(tf_listener_test ${catkin_LIBRARIES})
  target_link_libraries(wrench_transform ${catkin_LIBRARIES})
+ target_link_libraries(get_wrench_base_sim ${catkin_LIBRARIES})
 #  target_link_libraries(iiwa14_rs_tool_manipulator_ikfast_plugin ${catkin_LIBRARIES})
 
 #############
