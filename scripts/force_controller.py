@@ -6,10 +6,10 @@ import message_filters
 class ForceController:
     def __init__(self) -> None:
         
-        self.Desired_force = 5 # 10 N desired force to applied
+        self.Desired_force = 10 # 10 N desired force to applied
         self.Kp = 1
         self.Kd = 1
-        self.Kf = 5000
+        self.Kf = 1000
         self.prev_error_fz = 0
         self.rate = rospy.Rate(10)
         self.dt = 1/10
@@ -20,7 +20,7 @@ class ForceController:
         self.init_pose.header.stamp = rospy.Time.now()
         self.init_pose.pose.position.x = -0.62
         self.init_pose.pose.position.y = 0.0
-        self.init_pose.pose.position.z = 0.1
+        self.init_pose.pose.position.z = 0.2
         self.init_pose.pose.orientation.x = 0.7
         self.init_pose.pose.orientation.y = 0.7
         self.init_pose.pose.orientation.z = 0.0
@@ -63,21 +63,24 @@ class ForceController:
         self.curr_force = force_msg.wrench.force.z
 
         print("current_force", self.curr_force)
-        self.error_fz = (self.Desired_force - abs(self.curr_force))/self.Kf
+        self.error_fz = self.Desired_force - abs(self.curr_force)
         print("self.error_fz", self.error_fz)
         dFe = self.error_fz - self.prev_error_fz
+        print("dFe", dFe)
+        print("prev_error", self.prev_error_fz)
         self.prev_error_fz = self.error_fz
-        dZ = (self.Kp*self.error_fz + self.Kd*dFe)*self.dt
+        # dZ = (self.Kp*self.error_fz + self.Kd*dFe)*self.dt
+        dZ = (self.Kp/self.Kf)*self.error_fz*self.dt + (self.Kd/self.Kf)*dFe*self.dt
         print("dZ",dZ)
-        self.update_pose(dZ)
+        self.update_pose(dZ)    
   
     
     def update_pose(self, dZ):
         # if (self.curr_force < 10):
-        print("poseinZ_before",self.init_pose.pose.position.z)
+        # print("poseinZ_before",self.init_pose.pose.position.z)
         self.init_pose.pose.position.z -= dZ
-        print("poseinZ",self.init_pose.pose.position.z)
-        print("dZ_again", dZ)
+        # print("poseinZ",self.init_pose.pose.position.z)
+        # print("dZ_again", dZ)
         self.init_pose.pose.position.x = -0.62
         self.init_pose.pose.position.y = 0.0
         self.init_pose.pose.orientation.x = 0.7
@@ -85,7 +88,7 @@ class ForceController:
         self.init_pose.pose.orientation.z = 0.0
         self.init_pose.pose.orientation.w = 0.0
         
-        print(self.init_pose)
+        # print(self.init_pose)
         self.pose_pub.publish(self.init_pose)
         # rospy.sleep(0.5)
 
