@@ -1,5 +1,5 @@
 <launch>
-  <arg name="align_depth"       default="true"/>
+  <!-- <arg name="align_depth"       default="true"/>
   <arg name="filters"           default="pointcloud"/>
 
   <arg name="rtabmap_args"      default="delete_db_on_start"/>
@@ -12,7 +12,7 @@
   <include file="$(find realsense2_camera)/launch/rs_camera.launch" >
     <arg name="align_depth" value="$(arg align_depth)"/>
     <arg name="filters"     value="$(arg filters)"/>
-  </include>
+  </include> -->
 
 
   <include file="$(find cartesian_trajectory_generator)/launch/trajectory_generator.launch">

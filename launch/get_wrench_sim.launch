@@ -1,10 +1,12 @@
 <launch>
+
   <node
     pkg="tera_iiwa_ros"
-    type="get_plot_data"
-    name="get_plot_data"
+    type="get_wrench_base_sim"
+    name="get_wrench_base_sim"
     output="screen"  />
-    
+
+
   <node
     pkg="tera_iiwa_ros"
     type="wrench_transform"

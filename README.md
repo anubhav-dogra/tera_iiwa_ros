@@ -27,7 +27,15 @@ This launch `iiwa_bringup`, `iiwa_setup` and `iiwa_tools` to setup the robot in 
 ## Command robot
 
 ### Two ways:
- - Best is to use `cartesian_trajectory_controller`: Go through readme of this repo.
+ - Best is to use `cartesian_trajectory_controller`:
+ `roslaunch tera_iiwa_ros cam_viz.launch`
+ `rostopic pub --once cartesian_trajectory_generator/new_goal...` tab tab
+
+ #### to move the robot
+ `rosrun tera_iiwa_ros plan_send_cartesian_commands`
+
+
+ AVOID USING THIS> CHECK POSE FILTER IN CONFIG IN iiwa_ros/iiwa_control/config/iiwa_control.yaml
  - or use `rostopic pub --once /iiwa/CartesianImpedance_trajectory_controller/reference_pose... ` tab tab
  MAKE SURE, COMMANDING POSE IS NOT VERY FAR. 
  
@@ -35,9 +43,14 @@ This launch `iiwa_bringup`, `iiwa_setup` and `iiwa_tools` to setup the robot in 
  - Safety configuration is equipped with
  	* Joint limits
  	* Cartesian Speed limit (200mm/sec)
- - Limit to the commanding torque values Through URDF torque limits
+ - Limit to the commanding torque values Through URDF torque limits (Need to check again)
  - Can also impose max. velocities to the joints through Safety configuration and URDF limits. (NOT YET IMplEMENTED)
- 
+
+### Get Wrench
+`roslaunch tera_iiwa_ros get_wrench.launch`
+
+ in simulation:
+`roslaunch tera_iiwa_ros get_wrench_sim.launch`
  
  
 ### Commands
