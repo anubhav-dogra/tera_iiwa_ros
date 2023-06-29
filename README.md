@@ -28,15 +28,17 @@ This launch `iiwa_bringup`, `iiwa_setup` and `iiwa_tools` to setup the robot in 
 
 ### Two ways:
  - Best is to use `cartesian_trajectory_controller`:
+
  `roslaunch tera_iiwa_ros cam_viz.launch`
+
  `rostopic pub --once cartesian_trajectory_generator/new_goal...` tab tab
 
- #### to move the robot
+- #### to move the robot
  `rosrun tera_iiwa_ros plan_send_cartesian_commands`
 
 
- AVOID USING THIS> CHECK POSE FILTER IN CONFIG IN iiwa_ros/iiwa_control/config/iiwa_control.yaml
- - or use `rostopic pub --once /iiwa/CartesianImpedance_trajectory_controller/reference_pose... ` tab tab
+-  AVOID USING THIS> CHECK POSE FILTER IN CONFIG IN iiwa_ros/iiwa_control/config/iiwa_control.yaml
+  `rostopic pub --once /iiwa/CartesianImpedance_trajectory_controller/reference_pose... ` tab tab
  MAKE SURE, COMMANDING POSE IS NOT VERY FAR. 
  
 ### Safety
