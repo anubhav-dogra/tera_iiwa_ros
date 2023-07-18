@@ -6,7 +6,7 @@ import tf2_ros
 class ForceController:
     def __init__(self) -> None:
         
-        self.Desired_force = 10 # 10 N desired force to applied
+        self.Desired_force = 3 # 10 N desired force to applied
         self.Kp = 1
         self.Kd = 1
         self.Kf = 1000
@@ -80,9 +80,9 @@ class ForceController:
         
         self.curr_force = force_msg.wrench.force.z
 
-        # print("current_force", self.curr_force)
+        print("current_force", self.curr_force)
         self.error_fz = self.Desired_force - abs(self.curr_force)
-        # print("self.error_fz", self.error_fz)
+        print("self.error_fz", self.error_fz)
         dFe = self.error_fz - self.prev_error_fz
         # print("dFe", dFe)
         # print("prev_error", self.prev_error_fz)
