@@ -18,13 +18,16 @@ function wrenchCallback(~, current_wrench_msg)
             
             pulse = submit("GETLATESTPULSE",'float64',numpoints);
             figure(1);
-%             plot(pulse')
+            plot(pulse')
             pulse_rec(count,:) = pulse; 
             count = count+1;
 %             size(pulse_rec);
-             pause(0.25)
+%              pause(0.25)
          elseif diff_time > 60
              clear current_wrench_sub
+             rosshutdown 
+             retvalue = submit("STOP",'uint8',1);
+                
          end
 
     else

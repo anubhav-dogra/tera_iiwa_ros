@@ -9,7 +9,7 @@
 
   <node
     pkg="tera_iiwa_ros"
-    type="wrench_transform"
-    name="wrench_transform"
+    type="wrench_transform_publisher"
+    name="wrench_transform_publisher"
     output="screen" />
 </launch>
