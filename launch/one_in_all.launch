@@ -6,13 +6,13 @@
   <arg name="depth_topic"       default="/camera/aligned_depth_to_color/image_raw"/>
   <arg name="rgb_topic"         default="/camera/color/image_raw"/>
   <arg name="camera_info_topic" default="/camera/color/camera_info"/>
-  <arg name="approx_sync"       default="false"/>
+  <arg name="approx_sync"       default="false"/> -->
 
 
   <include file="$(find realsense2_camera)/launch/rs_camera.launch" >
     <arg name="align_depth" value="$(arg align_depth)"/>
     <arg name="filters"     value="$(arg filters)"/>
-  </include> -->
+  </include>
 
 
 
@@ -39,8 +39,8 @@
 
   <node
     pkg="tera_iiwa_ros"
-    type="ComputePoses"
-    name="ComputePoses"
+    type="ComputePoses_dZ"
+    name="ComputePoses_dZ"
     output="screen"  />
   
   <node 
@@ -61,7 +61,7 @@
     name="send_new_goals"
     output="screen"  />
   
-  <node
+  <!-- <node
     pkg="tera_iiwa_ros"
     type="get_plot_data"
     name="get_plot_data"
@@ -70,5 +70,5 @@
     pkg="tera_iiwa_ros"
     type="wrench_transform"
     name="wrench_transform"
-    output="screen" />
+    output="screen" /> -->
 </launch>

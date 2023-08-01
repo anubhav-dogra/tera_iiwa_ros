@@ -16,7 +16,7 @@ void recieve_cb(geometry_msgs::PoseArray pose_array)
         single_pose_stamped.pose = pose_array.poses[0];
         //std::cout<<single_pose_stamped<<std::endl;
         pub_send.publish(single_pose_stamped);
-        ros::Duration(60.0).sleep();
+        ros::Duration(15.0).sleep();
     //}
     
 

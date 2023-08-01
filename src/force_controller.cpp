@@ -9,6 +9,9 @@
 #include "geometry_msgs/WrenchStamped.h"
 #include <cstdlib>
 #include <tf2_ros/static_transform_broadcaster.h>
+#include <dynamic_reconfigure/server.h>
+#include "tera_iiwa_ros/ForceZConfig.h"
+
 class ForceController{
     private:
     double  curr_force, error_fz, dFe, dZ;
@@ -17,7 +20,7 @@ class ForceController{
     tf2::Transform transform_base_ee;
     geometry_msgs::TransformStamped transformStamped_base_to_end;
     geometry_msgs::TransformStamped transformStamped_goal;
-    float desired_force=10.0;
+    float desired_force=5.0;
     double Kp = 1.0;
     double Kd = 1.0;
     double Kf = 1000.0;
@@ -38,10 +41,21 @@ class ForceController{
         }
         
         std::cout << transformStamped_base_to_end << std::endl;
+        // dynamic_reconfigure::Server<tera_iiwa_ros::ForceZConfig> server;
+        // dynamic_reconfigure::Server<tera_iiwa_ros::ForceZConfig>::CallbackType f;
+        // f = boost::bind(&ForceController::server_callback, this, _1, _2);
+        // server.setCallback(f);
         pose_pub = nh->advertise<geometry_msgs::PoseStamped>("/iiwa/CartesianImpedance_trajectory_controller/reference_pose",1);
         wrench_sub = nh->subscribe("/cartesian_wrench_tool",10, &ForceController::callback_controller, this);
 }
 
+    // void server_callback(tera_iiwa_ros::ForceZConfig &config, uint32_t level){
+    //     // ROS_INFO("Reconfigure Request: %d", 
+    //     //         config.Fz);
+    //     desired_force = 0;
+    //     desired_force = level;
+    //     ROS_INFO("desired_force",desired_force);
+    // }
 
     void callback_controller(const geometry_msgs::WrenchStamped& force_msg){
         
@@ -63,7 +77,7 @@ class ForceController{
         transformStamped_goal.header.stamp = ros::Time::now();
         transformStamped_goal.header.frame_id = "tool_link_ee";
         transformStamped_goal.child_frame_id = "goal_point";
-        std::cout << "prev_z" << transformStamped_goal.transform.translation.z << std::endl;
+        // std::cout << "prev_z" << transformStamped_goal.transform.translation.z << std::endl;
         transformStamped_goal.transform.translation.x = 0.0;
         transformStamped_goal.transform.translation.y = 0.0;
         transformStamped_goal.transform.translation.z += dZ;
@@ -71,7 +85,7 @@ class ForceController{
         transformStamped_goal.transform.rotation.y = 0.0;
         transformStamped_goal.transform.rotation.z = 0.0;
         transformStamped_goal.transform.rotation.w = 1; 
-        std::cout << transformStamped_goal << std::endl;
+        // std::cout << transformStamped_goal << std::endl;
         tf2::Vector3 translation_goal(transformStamped_goal.transform.translation.x,
                                         transformStamped_goal.transform.translation.y,
                                         transformStamped_goal.transform.translation.z);

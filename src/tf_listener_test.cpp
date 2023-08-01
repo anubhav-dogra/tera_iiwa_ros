@@ -13,8 +13,8 @@ public:
     tf2_(buffer_),  target_frame_("iiwa_link_0"),
     tf2_filter_(point_sub_, buffer_, target_frame_, 10, 0)
   {
-    // point_sub_.subscribe(n_, "pose_output", 10);
-    point_sub_.subscribe(n_, "final_pose_output", 10);
+    point_sub_.subscribe(n_, "pose_output", 10);
+    // point_sub_.subscribe(n_, "final_pose_output", 10);
     tf2_filter_.registerCallback( boost::bind(&PoseDrawer::msgCallback, this, _1) );
     
   }
@@ -35,7 +35,7 @@ public:
     //std::cout<<point_ptr->poses.size()<< std::endl;//
 
     int array_size = point_ptr->poses.size();
-    for(int i = 0; i < 1; i++) //array_size
+    for(int i = 4; i < 5; i++) //array_size
       { 
         point_now.pose.position.x = point_ptr->poses[i].position.x;
         point_now.pose.position.y = point_ptr->poses[i].position.y;
