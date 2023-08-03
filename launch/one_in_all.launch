@@ -8,11 +8,11 @@
   <arg name="camera_info_topic" default="/camera/color/camera_info"/>
   <arg name="approx_sync"       default="false"/> -->
 
-
+<!-- 
   <include file="$(find realsense2_camera)/launch/rs_camera.launch" >
     <arg name="align_depth" value="$(arg align_depth)"/>
     <arg name="filters"     value="$(arg filters)"/>
-  </include>
+  </include> -->
 
 
 
@@ -39,8 +39,8 @@
 
   <node
     pkg="tera_iiwa_ros"
-    type="ComputePoses_dZ"
-    name="ComputePoses_dZ"
+    type="ComputePoses"
+    name="ComputePoses"
     output="screen"  />
   
   <node 
@@ -51,15 +51,15 @@
   
   <node
     pkg="tera_iiwa_ros"
-    type="tf_listener_test"
-    name="tf_listener_test"
+    type="target_to_base"
+    name="target_to_base"
     output="screen"  />
 
-  <node
+  <!-- <node
     pkg="tera_iiwa_ros"
     type="send_new_goals"
     name="send_new_goals"
-    output="screen"  />
+    output="screen"  /> -->
   
   <!-- <node
     pkg="tera_iiwa_ros"

@@ -13,14 +13,16 @@
 % Force{2} = table2array(readtable('Force_study_270423/Force_recorded_Shruti_Rforearm2_270423.txt'));
 % Force{3} = table2array(readtable('Force_study_270423/Force_recorded_Shruti_Rforearm3_270423.txt'));
 % Force{4} = table2array(readtable('Force_study_270423/Force_recorded_Shruti_Rforearm4_270423.txt'));
-Pulse{1} = table2array(readtable('no_touch/Pulse_recorded_Aruturo_Lforearm1_020523.txt'));
-Pulse{2} = table2array(readtable('no_touch/Pulse_recorded_Aruturo_Lforearm2_020523.txt'));
-Pulse{3} = table2array(readtable('no_touch/Pulse_recorded_Aruturo_Lforearm3_020523.txt'));
-Force{1} = table2array(readtable('no_touch/Force_recorded_Arturo_Lforearm1_020523.txt'));
-Force{2} = table2array(readtable('no_touch/Force_recorded_Arturo_Lforearm2_020523.txt'));
-Force{3} = table2array(readtable('no_touch/Force_recorded_Arturo_Lforearm3_020523.txt'));
+Pulse{1} = table2array(readtable('no_touch/arturo_force_aug_3/Pulse_recorded1.txt'));
+Pulse{2} = table2array(readtable('no_touch/arturo_force_aug_3/Pulse_recorded2.txt'));
+Pulse{3} = table2array(readtable('no_touch/arturo_force_aug_3/Pulse_recorded3.txt'));
+Pulse{4} = table2array(readtable('no_touch/arturo_force_aug_3/Pulse_recorded4.txt'));
+Force{1} = table2array(readtable('no_touch/arturo_force_aug_3/Force_recorded1.txt'));
+Force{2} = table2array(readtable('no_touch/arturo_force_aug_3/Force_recorded2.txt'));
+Force{3} = table2array(readtable('no_touch/arturo_force_aug_3/Force_recorded3.txt'));
+Force{4} = table2array(readtable('no_touch/arturo_force_aug_3/Force_recorded4.txt'));
 %%
-for i=1:3
+for i=1:4
     Pulse_rec = Pulse{1,i}(:,2:end)';
     P2P=max(Pulse_rec(:,end/2:end),[],2)-min(Pulse_rec(:,end/2:end),[],2);
     figure(1),plot(P2P,'LineWidth',2.0)
@@ -31,7 +33,7 @@ end
 
 %%
 % Init_force = [0.2757, -0.2192, 0.3997,-1.149];
-for i=1:3
+for i=1:4
     force_rec1 = Force{1,i};
     for j = 1:size(force_rec1,1)
         if force_rec1(j) == 0

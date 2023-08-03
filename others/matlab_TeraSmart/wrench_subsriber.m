@@ -6,7 +6,7 @@ global initial_wrench_Fz pulse pulse_rec numpoints count current_wrench_Fz_rec c
 rosshutdown;
 rosinit;
 starttime=-340;
-endtime=-290;
+endtime=-280;
 retvalue = submit("START",'uint8',1);
 
 

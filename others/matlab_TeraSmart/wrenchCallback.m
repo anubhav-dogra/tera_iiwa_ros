@@ -17,8 +17,8 @@ function wrenchCallback(~, current_wrench_msg)
             disp('TeraSmart is now Recording');
             
             pulse = submit("GETLATESTPULSE",'float64',numpoints);
-            figure(1);
-            plot(pulse')
+%             figure(1);
+%             plot(pulse')
             pulse_rec(count,:) = pulse; 
             count = count+1;
 %             size(pulse_rec);

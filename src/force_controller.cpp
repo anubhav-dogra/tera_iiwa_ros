@@ -20,7 +20,7 @@ class ForceController{
     tf2::Transform transform_base_ee;
     geometry_msgs::TransformStamped transformStamped_base_to_end;
     geometry_msgs::TransformStamped transformStamped_goal;
-    float desired_force=5.0;
+    float desired_force=6.0;
     double Kp = 1.0;
     double Kd = 1.0;
     double Kf = 1000.0;

@@ -116,7 +116,7 @@ void cloud_cb(const sensor_msgs::PointCloud2ConstPtr& input)
     tf2::Quaternion q_tf_dz_;
     tf2::convert(quat_msg_,q_tf_dz_);
     // std::cout << q_tf_dz_.w() << q_tf_dz_.x() << q_tf_dz_.y() << q_tf_dz_.z() << std::endl;
-    tf2::Vector3 translation_tp_(0,0,-0.025);
+    tf2::Vector3 translation_tp_(0,0,-0.01);
     tf2::Transform transform_tp_(q_tf_dz_, translation_tp_);
 
     // Apply transformation
