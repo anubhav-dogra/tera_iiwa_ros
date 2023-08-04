@@ -1,5 +1,5 @@
 
-bag = rosbag('pose_data.bag');
+bag = rosbag('forhead_maniken_no_motion_norm.bag');
 bSel = select(bag,'Topic','/tf_array_out');
 msgStructs = readMessages(bSel,'DataFormat','struct');
 w = cellfun(@(m) double(m.Poses.Orientation.W),msgStructs);

@@ -6,6 +6,6 @@ P2P=max(pulse_rec(:,end/2:end),[],2)-min(pulse_rec(:,end/2:end),[],2);
 figure(1),plot(P2P)
 figure(2),plot(current_wrench_Fz_rec)
 T = table(time', pulse_rec', 'VariableNames', {'Time','Pulse'});
-writetable(T, 'Measurements/arturo_force_aug_3/Pulse_recorded4.txt')
+writetable(T, 'Measurements/aug_4/Pulse_recorded_shruti_cheek_3.txt')
 T1 = table(current_wrench_Fz_rec', 'VariableNames', {'Force'});
-writetable(T1, 'Measurements/arturo_force_aug_3/Force_recorded4.txt')
+writetable(T1, 'Measurements/aug_4/Force_recorded_shruti_cheek_3.txt')
