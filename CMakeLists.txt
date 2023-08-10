@@ -175,6 +175,7 @@ include_directories(
  add_executable(wrench_transform_publisher src/WrenchTransform.cpp)
  add_executable(ComputePoses_dZ src/ComputePoses_dZ.cpp)
  add_executable(target_to_base src/target_to_base.cpp)
+ add_executable(array_test src/array_test.cpp)
  
  add_dependencies(get_plot_data ${catkin_EXPORTED_TARGETS})
  add_dependencies(plan_send_cartesian_commands ${catkin_EXPORTED_TARGETS})
@@ -189,6 +190,7 @@ include_directories(
  add_dependencies(wrench_transform_publisher ${catkin_EXPORTED_TARGETS})
  add_dependencies(ComputePoses_dZ ${catkin_EXPORTED_TARGETS})
  add_dependencies(target_to_base ${catkin_EXPORTED_TARGETS})
+ add_dependencies(array_test ${catkin_EXPORTED_TARGETS})
  add_dependencies(force_controller ${PROJECT_NAME}_gencfg)
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -214,6 +216,7 @@ include_directories(
  target_link_libraries(wrench_transform_publisher ${catkin_LIBRARIES})
  target_link_libraries(ComputePoses_dZ ${catkin_LIBRARIES})
  target_link_libraries(target_to_base ${catkin_LIBRARIES})
+ target_link_libraries(array_test ${catkin_LIBRARIES})
 #  target_link_libraries(iiwa14_rs_tool_manipulator_ikfast_plugin ${catkin_LIBRARIES})
 
 #############

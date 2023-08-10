@@ -35,7 +35,7 @@ public:
     //std::cout<<point_ptr->poses.size()<< std::endl;//
 
     int array_size = point_ptr->poses.size();
-    for(int i = 0; i < 1; i++) //array_size
+    for(int i = 0; i < array_size; i++) //array_size
       { 
         point_now.pose.position.x = point_ptr->poses[i].position.x;
         point_now.pose.position.y = point_ptr->poses[i].position.y;

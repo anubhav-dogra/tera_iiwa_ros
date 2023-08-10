@@ -55,6 +55,7 @@ void cloud_cb(const sensor_msgs::PointCloud2ConstPtr& input)
 
   //Convert to pose
   int cloudsize = (cloud_filtered->width) * (cloud_filtered->height);
+  // std::cout << "width: " <<cloud_filtered->width << "height: " <<cloud_filtered->height << std::endl;
   Eigen::Isometry3d pose = Eigen::Isometry3d::Identity();
   geometry_msgs::PoseArray output_pose_array;
   for (int i = 0; i < cloudsize; i++) {

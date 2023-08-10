@@ -35,7 +35,7 @@ public:
     //std::cout<<point_ptr->poses.size()<< std::endl;//
 
     int array_size = point_ptr->poses.size();
-    for(int i = 0; i < 1; i++) //array_size
+    for(int i = 0; i < array_size; i++) //array_size
       { 
         point_now.pose.position.x = point_ptr->poses[i].position.x;
         point_now.pose.position.y = point_ptr->poses[i].position.y;
@@ -59,6 +59,7 @@ public:
         {
         ROS_WARN("Failure %s\n", ex.what()); //Print exception which was caught
         }
+
         // To complete dZ distance from the target point
         geometry_msgs::Quaternion quat_msg;
         quat_msg.w = tf_output_pose.pose.orientation.w;
@@ -114,7 +115,7 @@ private:
   ros::NodeHandle n_;
   message_filters::Subscriber<geometry_msgs::PoseArray> point_sub_;
   tf2_ros::MessageFilter<geometry_msgs::PoseArray> tf2_filter_;
-  ros::Publisher pub = n_.advertise<geometry_msgs::PoseArray>("tf_array_out", 10);
+  ros::Publisher pub = n_.advertise<geometry_msgs::PoseArray>("tf_array_out_dZ", 10);
 };
 
 int main(int argc, char** argv)
