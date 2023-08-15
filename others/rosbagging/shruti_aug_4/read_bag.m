@@ -2,7 +2,7 @@
 clc
 clear all
 
-bag = rosbag('forearm_shruti_no_motion_norm.bag');
+bag = rosbag('cheeks.bag');
 bSel = select(bag,'Topic','/tf_array_out');
 msgStructs = readMessages(bSel,'DataFormat','struct');
 w = cellfun(@(m) double(m.Poses.Orientation.W),msgStructs);
@@ -17,16 +17,22 @@ time_init = double(msgStructs{1}.Header.Stamp.Sec);
 time_final = double(msgStructs{n}.Header.Stamp.Sec);
 n_sec = time_final-time_init;
 time=linspace(0,n_sec,n);
+eul = (180/pi)*quat2eul([x,y,z,w],'XYZ');
 
 figure('Color','w','units','normalized','OuterPosition',[.1 .2 .5 .5])
-figure(1),plot(time, w, 'LineWidth',2);
+% figure(1),plot(time, w, 'LineWidth',2);
+% hold on
+% figure(1),plot(time, x, 'LineWidth',2);
+% figure(1),plot(time, y, 'LineWidth',2);
+% figure(1),plot(time, z, 'LineWidth',2);
+% figure(1),plot(time, xp, 'LineWidth',2);
+% figure(1),plot(time, yp, 'LineWidth',2);
+% figure(1),plot(time, zp, 'LineWidth',2);
+figure(2),plot(time, eul(:,1), 'LineWidth',2, 'Color','r');
 hold on
-figure(1),plot(time, x, 'LineWidth',2);
-figure(1),plot(time, y, 'LineWidth',2);
-figure(1),plot(time, z, 'LineWidth',2);
-figure(1),plot(time, xp, 'LineWidth',2);
-figure(1),plot(time, yp, 'LineWidth',2);
-figure(1),plot(time, zp, 'LineWidth',2);
+figure(2),plot(time, eul(:,2), 'LineWidth',2, 'Color','g');
+figure(2),plot(time, eul(:,3), 'LineWidth',2, 'Color','b');
+
 % colormap1=jet(11);
 % for i=1:11
 % figure(1),plot(x,y+i,'color',colormap1(i,:),'LineWidth',1),hold on
