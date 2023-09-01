@@ -25,7 +25,7 @@ int main(int argc, char **argv)
 {
     ros::init(argc, argv, "send_new_goals");
     ros::NodeHandle nh_send;
-    ros::Subscriber sub_array = nh_send.subscribe<geometry_msgs::PoseArray>("tf_array_out",1, recieve_cb);
+    ros::Subscriber sub_array = nh_send.subscribe<geometry_msgs::PoseArray>("tf_array_out_dZ",1, recieve_cb);
     pub_send = nh_send.advertise<geometry_msgs::PoseStamped>("cartesian_trajectory_generator/new_goal",1);
     //  ros::Duration(20.0).sleep();
     ros::spin();
