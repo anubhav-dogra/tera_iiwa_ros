@@ -1,0 +1,9 @@
+<launch>
+
+  <node
+    pkg="tera_iiwa_ros"
+    type="plan_send_cartesian_commands"
+    name="plan_send_cartesian_commands"
+    output="screen"  /> 
+  
+</launch>

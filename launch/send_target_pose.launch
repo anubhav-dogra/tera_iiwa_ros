@@ -1,0 +1,9 @@
+<launch>
+
+  <node
+    pkg="tera_iiwa_ros"
+    type="send_target_pose"
+    name="send_target_pose"
+    output="screen"  />
+
+</launch>

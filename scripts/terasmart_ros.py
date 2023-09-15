@@ -36,8 +36,8 @@ def CallbackWrench(msg):
             print("numpoints", numpoints)
             pulse_data = submit("GETLATESTPULSE", "d", 8*numpoints[0]) #array with the pulse data
             print("size",sys.getsizeof(pulse_data))
-            # plt.plot(pulse_data)
-            # plt.show()
+            plt.plot(pulse_data)
+            plt.show()
         else:
             return_value = submit("STOP","?", 8)#Starting/Stopping Spectrometer if scanning
         
@@ -46,29 +46,31 @@ def CallbackWrench(msg):
 
 if __name__=="__main__":
     rospy.init_node("terasmart_ros")
+    rate = rospy.Rate(4)
     global prev_Fz, current_Fz, counter, counter_, t1, numpoints
     counter = 0
     counter_ = 0
     prev_Fz = 0
     current_Fz = 0
-    ip_addr = "137.205.241.135"
+    # ip_addr = "137.205.241.135"
+    ip_addr = "10.216.120.118"
     port = 8001
     start_time = -340
     end_time = -290
-    return_value = submit("START","?", 8)#Starting/Stopping Spectrometer if scanning
+    return_value = submit("STOP","?", 8)#Starting/Stopping Spectrometer if scanning
     return_value = submit("GETSTATUS","i",32)#getting the status
     return_value = submit("SETSTARTVALUE -340", "?", 8)#setting the start of the scan
     return_value = submit("SETENDVALUE -290", "?", 8)#setting the end of the scan
     return_value = submit("START","?", 8)#StartingSpectrometer if scanning
     numpoints = submit("GETNUMBEROFPOINTS", "i", 32) #number of points of the pulse
-    print(numpoints[0])
+    print("numpoints: ",  numpoints[0])
     
     time_axis = submit("GETTIMEAXIS", "d", 8*numpoints[0]) #array with the time data
-    plt.plot(time_axis)
-    plt.show()
+    # plt.plot(time_axis)
+    # plt.show()
     print("unfinished")
 
-    #rospy.wait_for_message("/cartesian_wrench")
-    rospy.Subscriber("/cartesian_wrench_tool",WrenchStamped,callback=CallbackWrench)
-
-    rospy.spin()
+    while not rospy.is_shutdown():
+        #rospy.wait_for_message("/cartesian_wrench")
+        rospy.Subscriber("/cartesian_wrench_tool",WrenchStamped,callback=CallbackWrench)
+        rate.sleep()

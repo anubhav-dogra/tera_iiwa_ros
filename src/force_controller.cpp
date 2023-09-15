@@ -60,13 +60,13 @@ class ForceController{
     void callback_controller(const geometry_msgs::WrenchStamped& force_msg){
         
         curr_force = force_msg.wrench.force.z;
-        std::cout << "current_force" << curr_force << std::endl;
+        // std::cout << "current_force" << curr_force << std::endl;
         error_fz = desired_force - abs(curr_force);
-         std::cout << "Fz error" << error_fz << std::endl;
+        //  std::cout << "Fz error" << error_fz << std::endl;
         dFe = error_fz - prev_error_fz;
         prev_error_fz = error_fz;
         dZ = (Kp/Kf)*error_fz*dt + (Kd/Kf)*dFe*dt;        
-        std::cout << "dZ" << dZ << std::endl;
+        // std::cout << "dZ" << dZ << std::endl;
         geometry_msgs::PoseStamped pose = update_pose(dZ);
         pose_pub.publish(pose);
         

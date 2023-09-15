@@ -14,6 +14,7 @@ public:
         // Initialize publishers
         wrench_pub_ = nh_.advertise<geometry_msgs::WrenchStamped>("cartesian_wrench_tool", 1);
         wrench_pub_ts = nh_.advertise<geometry_msgs::WrenchStamped>("cartesian_wrench_tool_ts", 1);
+        eef_pose_ = nh_.advertise<geometry_msgs::TransformStamped>("/tool_link_ee_pose", 1);
 
         // Initialize TF2 listener
         tf_listener_ = new tf2_ros::TransformListener(tf_buffer_);
@@ -28,6 +29,7 @@ private:
     ros::Subscriber wrench_sub_;
     ros::Publisher wrench_pub_;
     ros::Publisher wrench_pub_ts;
+    ros::Publisher eef_pose_;
     tf2_ros::Buffer tf_buffer_;
     tf2_ros::TransformListener* tf_listener_;
     ros::Timer timer1_;
@@ -42,15 +44,19 @@ private:
     }
 
     void timerCallback1(const ros::TimerEvent& event) {
-        // This function will be called at rate1_ (25 Hz)
+        // This function will be called at rate1_ (100 Hz)
         if (!latest_wrench_.header.stamp.isZero()) {
             // Transform the latest stamped wrench to the desired frame
             geometry_msgs::WrenchStamped transformed_wrench;
             try {
-                geometry_msgs::TransformStamped transformStamped;
+                geometry_msgs::TransformStamped transformStamped, transformation_b_eef;
                 transformStamped = tf_buffer_.lookupTransform("tool_link_ee", latest_wrench_.header.frame_id, latest_wrench_.header.stamp, ros::Duration(1.0));
+                transformation_b_eef = tf_buffer_.lookupTransform("iiwa_link_0", 
+                                                  "tool_link_ee", 
+                                                  ros::Time(0));
                 tf2::doTransform(latest_wrench_, transformed_wrench, transformStamped);
                 wrench_pub_.publish(transformed_wrench);
+                eef_pose_.publish(transformation_b_eef);
             } catch (tf2::TransformException& ex) {
                 ROS_WARN("%s", ex.what());
             }
@@ -58,7 +64,7 @@ private:
     }
 
     void timerCallback2(const ros::TimerEvent& event) {
-        // This function will be called at rate2_ (10 Hz)
+        // This function will be called at rate2_ (4 Hz)
         if (!latest_wrench_.header.stamp.isZero()) {
             // Transform the latest stamped wrench to the desired frame
             geometry_msgs::WrenchStamped transformed_wrench;

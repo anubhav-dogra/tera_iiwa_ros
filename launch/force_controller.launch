@@ -1,0 +1,9 @@
+<launch>
+
+  <node
+    pkg="tera_iiwa_ros"
+    type="force_controller"
+    name="force_controller"
+    output="screen"  />
+
+</launch>

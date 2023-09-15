@@ -176,6 +176,7 @@ include_directories(
  add_executable(ComputePoses_dZ src/ComputePoses_dZ.cpp)
  add_executable(target_to_base src/target_to_base.cpp)
  add_executable(array_test src/array_test.cpp)
+ add_executable(send_target_pose src/send_target_pose.cpp)
  
  add_dependencies(get_plot_data ${catkin_EXPORTED_TARGETS})
  add_dependencies(plan_send_cartesian_commands ${catkin_EXPORTED_TARGETS})
@@ -191,6 +192,7 @@ include_directories(
  add_dependencies(ComputePoses_dZ ${catkin_EXPORTED_TARGETS})
  add_dependencies(target_to_base ${catkin_EXPORTED_TARGETS})
  add_dependencies(array_test ${catkin_EXPORTED_TARGETS})
+ add_dependencies(send_target_pose ${catkin_EXPORTED_TARGETS})
  add_dependencies(force_controller ${PROJECT_NAME}_gencfg)
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -217,6 +219,7 @@ include_directories(
  target_link_libraries(ComputePoses_dZ ${catkin_LIBRARIES})
  target_link_libraries(target_to_base ${catkin_LIBRARIES})
  target_link_libraries(array_test ${catkin_LIBRARIES})
+ target_link_libraries(send_target_pose ${catkin_LIBRARIES})
 #  target_link_libraries(iiwa14_rs_tool_manipulator_ikfast_plugin ${catkin_LIBRARIES})
 
 #############
@@ -232,12 +235,16 @@ include_directories(
 #   scripts/my_python_script
 #   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 # )
+# catkin_install_python(PROGRAMS
+#    src/get_plot_data.py 
+#    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+# )
 catkin_install_python(PROGRAMS
-   src/get_plot_data.py 
+   scripts/teleop_keyboard.py 
    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 catkin_install_python(PROGRAMS
-   scripts/teleop_keyboard.py 
+   scripts/terasmart_ros.py 
    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 ## Mark executables for installation

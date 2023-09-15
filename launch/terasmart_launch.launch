@@ -1,0 +1,9 @@
+<launch>
+
+  <node
+    pkg="tera_iiwa_ros"
+    type="terasmart_ros.py"
+    name="terasmart_ros"
+    output="screen"  />
+
+</launch>
