@@ -12,6 +12,7 @@
 #include <dynamic_reconfigure/server.h>
 #include "tera_iiwa_ros/ForceZConfig.h"
 
+float desired_force = 4.5;
 class ForceController{
     private:
     double  curr_force, error_fz, dFe, dZ;
@@ -20,7 +21,6 @@ class ForceController{
     tf2::Transform transform_base_ee;
     geometry_msgs::TransformStamped transformStamped_base_to_end;
     geometry_msgs::TransformStamped transformStamped_goal;
-    float desired_force=5.0;
     double Kp = 1.0;
     double Kd = 1.0;
     double Kf = 1000.0;
@@ -62,6 +62,7 @@ class ForceController{
         curr_force = force_msg.wrench.force.z;
         // std::cout << "current_force" << curr_force << std::endl;
         error_fz = desired_force - abs(curr_force);
+        // std::cout << "desired_force" << desired_force << std::endl;
         //  std::cout << "Fz error" << error_fz << std::endl;
         dFe = error_fz - prev_error_fz;
         prev_error_fz = error_fz;
@@ -70,6 +71,10 @@ class ForceController{
         geometry_msgs::PoseStamped pose = update_pose(dZ);
         pose_pub.publish(pose);
         
+    }
+
+    void callback_dyn_param(tera_iiwa_ros::ForceZConfig &config, uint32_t level){
+        desired_force = config.desired_force;
     }
 
 
@@ -131,6 +136,10 @@ int main(int argc, char **argv)
 {
     ros::init(argc,argv, "force_controller");
     ros::NodeHandle nh;
+    dynamic_reconfigure::Server<tera_iiwa_ros::ForceZConfig> server;
+    dynamic_reconfigure::Server<tera_iiwa_ros::ForceZConfig>::CallbackType f;
     ForceController fc = ForceController(&nh);
+    f = boost::bind(&ForceController::callback_dyn_param, fc, _1, _2);
+    server.setCallback(f);
     ros::spin();
 }

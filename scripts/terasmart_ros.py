@@ -33,11 +33,12 @@ def CallbackWrench(msg):
         if diff_time <= 60:
             print("THz is recording")
             print("current_Fz", current_Fz)
-            print("numpoints", numpoints)
+            # print("numpoints", numpoints)
             pulse_data = submit("GETLATESTPULSE", "d", 8*numpoints[0]) #array with the pulse data
             print("size",sys.getsizeof(pulse_data))
-            plt.plot(pulse_data)
-            plt.show()
+            print("counter",counter)
+            # plt.plot(pulse_data)
+            # plt.show()
         else:
             return_value = submit("STOP","?", 8)#Starting/Stopping Spectrometer if scanning
         
@@ -72,5 +73,5 @@ if __name__=="__main__":
 
     while not rospy.is_shutdown():
         #rospy.wait_for_message("/cartesian_wrench")
-        rospy.Subscriber("/cartesian_wrench_tool",WrenchStamped,callback=CallbackWrench)
+        rospy.Subscriber("/cartesian_wrench_tool_ts",WrenchStamped,callback=CallbackWrench)
         rate.sleep()
