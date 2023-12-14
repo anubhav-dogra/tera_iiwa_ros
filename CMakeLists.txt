@@ -166,6 +166,7 @@ include_directories(
  add_executable(plan_send_cartesian_commands src/plan_send_cartesian_commands.cpp)
  add_executable(check_ik src/check_ik.cpp)
  add_executable(eye_in_hand src/eye_in_hand.cpp)
+ add_executable(eye_in_hand_raster src/eye_in_hand_raster.cpp)
  add_executable(send_new_goals src/send_new_goals.cpp)
  add_executable(ComputePoses src/ComputePoses.cpp)
  add_executable(tf_listener_test src/tf_listener_test.cpp)
@@ -182,6 +183,7 @@ include_directories(
  add_dependencies(plan_send_cartesian_commands ${catkin_EXPORTED_TARGETS})
  add_dependencies(check_ik ${catkin_EXPORTED_TARGETS})
  add_dependencies(eye_in_hand ${catkin_EXPORTED_TARGETS})
+ add_dependencies(eye_in_hand_raster ${catkin_EXPORTED_TARGETS})
  add_dependencies(send_new_goals ${catkin_EXPORTED_TARGETS})
  add_dependencies(ComputePoses ${catkin_EXPORTED_TARGETS})
  add_dependencies(tf_listener_test ${catkin_EXPORTED_TARGETS})
@@ -209,6 +211,7 @@ include_directories(
  target_link_libraries(plan_send_cartesian_commands ${catkin_LIBRARIES})
  target_link_libraries(check_ik ${catkin_LIBRARIES})
  target_link_libraries(eye_in_hand ${catkin_LIBRARIES})
+ target_link_libraries(eye_in_hand_raster ${catkin_LIBRARIES})
  target_link_libraries(send_new_goals ${catkin_LIBRARIES})
  target_link_libraries(ComputePoses ${catkin_LIBRARIES})
  target_link_libraries(tf_listener_test ${catkin_LIBRARIES})
@@ -244,7 +247,7 @@ catkin_install_python(PROGRAMS
    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 catkin_install_python(PROGRAMS
-   scripts/terasmart_ros.py 
+   scripts/ros_terasmart.py 
    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 ## Mark executables for installation

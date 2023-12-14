@@ -2,8 +2,8 @@
 
   <node
     pkg="tera_iiwa_ros"
-    type="terasmart_ros.py"
-    name="terasmart_ros"
+    type="ros_terasmart.py"
+    name="ros_terasmart"
     output="screen"  />
 
 </launch>
