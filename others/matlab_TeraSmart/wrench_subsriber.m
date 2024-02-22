@@ -1,8 +1,8 @@
 clear all
 clc
 close all
-global initial_wrench_Fz pulse pulse_rec numpoints count current_wrench_Fz_rec current_wrench_sub
-% retvalue = submit("STOP",'uint8',1);
+global initial_wrench_Fz pulse pulse_rec numpoints count current_wrench_Fz_rec current_wrench_sub time
+retvalue = submit("STOP",'uint8',1);
 rosshutdown;
 rosinit;
 starttime=-340;

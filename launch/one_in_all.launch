@@ -31,9 +31,14 @@
      
 
 
-  <node 
+  <!-- <node 
     pkg="cv_trials"
     type="roboflow_detection.py"
+    name="pose_detection"
+    output="screen"/> -->
+    <node 
+    pkg="cv_trials"
+    type="green_marker_detection.py"
     name="pose_detection"
     output="screen"/>
 
