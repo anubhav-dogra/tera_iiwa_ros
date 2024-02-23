@@ -22,7 +22,7 @@ retvalue = submit(endtimecommand,'uint8',1);
 setmodecommand = sprintf("SETMODE %d",0);
 retvalue = submit(setmodecommand,'uint8',1);
 
-numpoints = submit("GETNUMBEROFPOINTS",'int32',1);
+numpoints = submit("GETNUMBEROFPOINTS",'int32',1)
 
 pulse = submit("GETLATESTPULSE",'float64',numpoints);
 time = submit("GETTIMEAXIS",'float64',numpoints);
