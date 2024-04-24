@@ -21,6 +21,7 @@ Eigen::VectorXd ext_torques(7);
 int n;
 using namespace std;
 Eigen::MatrixXd J(6,7);
+Eigen::MatrixXd J_(7,6);
 Eigen::MatrixXd Ext_torq(7,1);
 geometry_msgs::WrenchStamped eef_wrench;
 Eigen::Matrix<double, 6, 1> cartesian_wrench_;
@@ -173,19 +174,31 @@ void iiwa_jointstates_callback(sensor_msgs::JointState inflow_j_states){
         ROS_ERROR("Failed to call service iiwa_jacobian_server");
     }
     std::vector<double> j_data = get_J_srv.response.jacobian.data;
-    int count = 0;
-    for (int i = 0; i < 6; i++)
-    {
-        for (int j = 0; j < 7; j++)
-        {
-         J(i,j) = j_data[count];
+    J_ = Eigen::Map<Eigen::MatrixXd>(j_data.data(), 7, 6);
+    J=J_.transpose();
+    // std::cout << "J" << std::endl; 
+    // for (int i = 0; i < J.rows(); ++i) {
+    //         for (int j = 0; j < J.cols(); ++j) {
+    //         std::cout << J(i, j) << " ";
+    //         }
+    //     std::cout << std::endl;  // Move to the next row
+    //     }
+
+    //Old Method to get Jacobian
+    // int count = 0;
+    // std::cout << "J_second" << std::endl; 
+    // for (int i = 0; i < 6; i++)
+    // {
+    //     for (int j = 0; j < 7; j++)
+    //     {
+    //      J(i,j) = j_data[count];
          
-        //  std::cout<< i << ":::"<< j << ":::"<< J(i,j) << std::endl;
-         count++;
-         
-        }
-        
-    }
+    //     //  std::cout<< i << ":::"<< j << ":::"<< J(i,j) << std::endl;
+    //      count++;
+    //      std::cout << J(i, j) << " ";
+    //     }
+    //     std::cout << std::endl;
+    // }
     //cout << J << endl;
     
     
