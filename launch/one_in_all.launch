@@ -22,8 +22,8 @@
 
   <node
     pkg="tera_iiwa_ros"
-    type="eye_in_hand"
-    name="eye_in_hand"
+    type="eye_in_hand_raster"
+    name="eye_in_hand_raster"
     output="screen"  />
     
 

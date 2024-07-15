@@ -140,6 +140,10 @@ catkin_package(
 ###########
 ## Build ##
 ###########
+# Sets build type to "Release" in case no build type has not been set before. This is necessary to run this controller at 1 kHz.
+if(NOT CMAKE_BUILD_TYPE) 
+    set(CMAKE_BUILD_TYPE Release)
+endif(NOT CMAKE_BUILD_TYPE)
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations

@@ -57,13 +57,13 @@ int main(int argc, char **argv)
     transformStamped_calib.header.stamp = ros::Time::now();
     transformStamped_calib.header.frame_id = "iiwa_link_ee";
     transformStamped_calib.child_frame_id = "camera_color_optical_frame";
-    transformStamped_calib.transform.translation.x = -0.0297507;
+    transformStamped_calib.transform.translation.x = -0.0317507; //-0.0297507
     transformStamped_calib.transform.translation.y = -0.105022;
     transformStamped_calib.transform.translation.z = 0.0267093;
-    transformStamped_calib.transform.rotation.x = 0.00753;
-    transformStamped_calib.transform.rotation.y = -0.0057455;
-    transformStamped_calib.transform.rotation.z = 0.0207761;
-    transformStamped_calib.transform.rotation.w = 0.999739;  
+    transformStamped_calib.transform.rotation.x = 0;//0.00753;
+    transformStamped_calib.transform.rotation.y = 0;//-0.0057455;
+    transformStamped_calib.transform.rotation.z = 0;//0.0207761;
+    transformStamped_calib.transform.rotation.w = 1;//0.999739;  
 
 
     tf2::Vector3 translation_calib(transformStamped_calib.transform.translation.x,

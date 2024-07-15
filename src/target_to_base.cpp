@@ -100,7 +100,7 @@ public:
         
 
         tf_array_out.poses.push_back(tf_output_pose.pose);
-        std::cout<<"value is"<<tf_array_out.poses[0]<<std::endl;
+        // std::cout<<"value is"<<tf_array_out.poses[0]<<std::endl;
       }
 
       
