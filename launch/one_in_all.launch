@@ -36,10 +36,15 @@
     type="roboflow_detection.py"
     name="pose_detection"
     output="screen"/> -->
-    <node 
+    <!-- <node 
     pkg="cv_trials"
     type="green_marker_detection.py"
     name="pose_detection"
+    output="screen"/> -->
+    <node 
+    pkg="roi_detection"
+    type="grn_mrkr_cropbox.py"
+    name="green_marker_detection_with_cropbox"
     output="screen"/>
 
   <node
@@ -48,10 +53,15 @@
     name="ComputePoses"
     output="screen"  />
   
-  <node 
+  <!-- <node 
     pkg="cv_trials"
     type="normal_estimation.py"
     name="normal_estimation"
+    output="screen"/> -->
+    <node 
+    pkg="roi_detection"
+    type="weighted_avg_normals.py"
+    name="weighted_avg_normals"
     output="screen"/>
   
   <node
