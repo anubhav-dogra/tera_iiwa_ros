@@ -83,3 +83,17 @@ This launch `iiwa_bringup`, `iiwa_setup` and `iiwa_tools` to setup the robot in 
  - BOOOOM
 
 
+### Icon
+```
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Terabotics
+Icon=/home/robothz/Pictures/logo.svg
+Exec=bash -c "source /opt/ros/noetic/setup.bash ; source /home/robothz/stuff_ws/devel/setup.bash; export ROS_IP=192.170.10.1 ; export ROS_MASTER_URL=HTTP://$ROS_IP:11311 ; python3 /home/robothz/gui_ws/Terabotics_switches.py ; read -p press"
+Terminal=true
+Type=Application
+
+```
+Save this file as Filename.desktop
+then mark its properties as executable. 
