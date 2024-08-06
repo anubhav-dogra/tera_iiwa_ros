@@ -6,11 +6,11 @@
     name="force_controller"
     output="screen"  />
 
-    <node
+    <!-- <node
     pkg="rqt_reconfigure"
     type="rqt_reconfigure"
     name="rqt_reconfigure"
-    output="screen"  />
+    output="screen"  /> -->
 
 
 </launch>

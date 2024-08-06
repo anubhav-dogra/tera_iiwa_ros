@@ -8,8 +8,8 @@ void ref_pose_cb(geometry_msgs::PoseStamped msg){
     geometry_msgs::PoseStamped ref_pose_ = msg;
     ref_pose_.header.frame_id ="world";
     ref_pose_.header.stamp = ros::Time::now();
-    std::cout<< ref_pose_ << std::endl;
-    std::cout<< "next message" << std::endl;
+    // std::cout<< ref_pose_ << std::endl;
+    // std::cout<< "next message" << std::endl;
     pub.publish(ref_pose_);
 }
 
