@@ -5,16 +5,17 @@ from geometry_msgs.msg import WrenchStamped
 import socket, struct, sys, time
 
 class THzROS:
-    def __init__(self, ip, port,base_file_name):
+    def __init__(self, ip, port,base_file_name, total_time):
         # THz system communication and settings
         self.ip_addr = ip
         self.port = port
-        self.start_time = -340
-        self.end_time = -280
+        self.total_time = total_time
+        # self.start_time = -250 #-340
+        # self.end_time = -200 #-280
         return_value = self.submit("STOP","?", 8)#Starting/Stopping Spectrometer if scanning
         return_value = self.submit("GETSTATUS","i",32)#getting the status
-        return_value = self.submit("SETSTARTVALUE -340", "?", 8)#setting the start of the scan
-        return_value = self.submit("SETENDVALUE -280", "?", 8)#setting the end of the scan
+        return_value = self.submit("SETSTARTVALUE -250", "?", 8)#setting the start of the scan
+        return_value = self.submit("SETENDVALUE -200", "?", 8)#setting the end of the scan
         return_value = self.submit("START","?", 8)#StartingSpectrometer if scanning
         print("Connected to TeraSMART scan control system")
         time.sleep(2)
@@ -29,7 +30,7 @@ class THzROS:
         self.base_file_name = base_file_name
         self.output_file_force = open(f"Force_{self.base_file_name}.txt", 'a')  # Open file in append mode
         self.output_file_pulse = open(f"Pulse_{self.base_file_name}.txt", 'a')  # Open file in append mode
-        self.rate = rospy.Rate(4) #4 Hz
+        self.rate = rospy.Rate(10) #4 Hz
         self.counter = 0
         self.counter_ = 0
 
@@ -48,7 +49,7 @@ class THzROS:
 
         t2 = rospy.get_time()
         diff_time = t2-self.t1
-        if diff_time <= 1:
+        if diff_time <= self.total_time:
             print("THz is recording")
             self.output_file_force.write(str(current_Fz) + '\n')  # Write data to file
             self.output_file_force.flush()  # Flush buffer to ensure data is written immediately
@@ -88,16 +89,20 @@ class THzROS:
     
     
 if __name__ == '__main__':
-    if len(sys.argv) != 2:
-        print("Usage: python script.py <base_file_name>")
-        sys.exit(1)
+
+   #for GUI comment it out, otherwise uncomment for direct python running.
+    # if len(sys.argv) != 2:
+    #     print("Usage: python script.py <base_file_name>")
+    #     sys.exit(1)
 
     base_file_name = sys.argv[1]
-
-    ip = "10.216.47.23"
+    print("*********Saving THz and Force data with base file name as "+ base_file_name + "for " + sys.argv[2] + " secs  ************")
+    total_time = sys.argv[2]
+    # ip = "10.216.47.23"
+    ip = "192.170.10.10"
     port = 8001
     try:
-        data_logger = THzROS(ip, port, base_file_name)
+        data_logger = THzROS(ip, port, base_file_name, total_time)
         data_logger.run()
     except rospy.ROSInterruptException:
         pass

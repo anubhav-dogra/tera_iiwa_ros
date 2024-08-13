@@ -6,7 +6,7 @@
 class StampedWrenchTransformer {
 public:
     StampedWrenchTransformer(ros::NodeHandle& nh)
-        : nh_(nh), rate1_(100), rate2_(4) // Set the desired publishing rates
+        : nh_(nh), rate1_(100), rate2_(10) // Set the desired publishing rates
     {
         // Initialize subscribers
         wrench_sub_ = nh_.subscribe("cartesian_wrench", 1, &StampedWrenchTransformer::wrenchCallback, this);
