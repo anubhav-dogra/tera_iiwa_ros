@@ -36,7 +36,7 @@ class THzROS:
 
     def callback_wrench(self, data):
         current_Fz = data.wrench.force.z
-        rospy.loginfo("Received data: %s", current_Fz)
+        # rospy.loginfo("Received data: %s", current_Fz)
         if self.counter_ == 0:
             prev_Fz = current_Fz
             print("prev_Fz:", prev_Fz)
@@ -50,7 +50,7 @@ class THzROS:
         t2 = rospy.get_time()
         diff_time = t2-self.t1
         if diff_time <= self.total_time:
-            print("THz is recording")
+            # print("THz is recording")
             self.output_file_force.write(str(current_Fz) + '\n')  # Write data to file
             self.output_file_force.flush()  # Flush buffer to ensure data is written immediately
             pulse_data = self.submit("GETLATESTPULSE", "d", 8*self.numpoints[0]) #array with the pulse data
@@ -61,7 +61,7 @@ class THzROS:
 
         else:
             return_value = self.submit("STOP","?", 8)#Starting/Stopping Spectrometer if scanning
-            print("STOPPED")
+            # print("STOPPED")
             # self.disconnect()
         self.counter += 1
 

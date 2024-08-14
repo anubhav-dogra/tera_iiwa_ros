@@ -1,10 +1,12 @@
 <launch>
+<arg name="file" default="test_file"/>
+<arg name="time" default="60"/>
 
   <node
     pkg="tera_iiwa_ros"
     type="thz_ros.py"
     name="thz_ros"
     output="screen" 
-    args="test_files 60" />
+    args="$(arg file) $(arg time)"/>
 
 </launch>
