@@ -1,6 +1,6 @@
 <launch>
 <arg name="file" default="test_file"/>
-<arg name="time" default="60"/>
+<arg name="time" default="10"/>
 
   <node
     pkg="tera_iiwa_ros"

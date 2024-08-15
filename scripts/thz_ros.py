@@ -9,7 +9,8 @@ class THzROS:
         # THz system communication and settings
         self.ip_addr = ip
         self.port = port
-        self.total_time = total_time
+        self.total_time = int(total_time) # coz input is of type str
+        # print(type(self.total_time))
         # self.start_time = -250 #-340
         # self.end_time = -200 #-280
         return_value = self.submit("STOP","?", 8)#Starting/Stopping Spectrometer if scanning
@@ -28,8 +29,8 @@ class THzROS:
         rospy.init_node('thz_ros', anonymous=True)
         self.data_subscriber = rospy.Subscriber('/cartesian_wrench_tool_ts', WrenchStamped, self.callback_wrench)
         self.base_file_name = base_file_name
-        self.output_file_force = open(f"Force_{self.base_file_name}.txt", 'a')  # Open file in append mode
-        self.output_file_pulse = open(f"Pulse_{self.base_file_name}.txt", 'a')  # Open file in append mode
+        self.output_file_force = open(f"/home/picobothz/Recordings/Force_{self.base_file_name}.txt", 'a')  # Open file in append mode
+        self.output_file_pulse = open(f"/home/picobothz/Recordings/Pulse_{self.base_file_name}.txt", 'a')  # Open file in append mode
         self.rate = rospy.Rate(10) #4 Hz
         self.counter = 0
         self.counter_ = 0
@@ -39,7 +40,7 @@ class THzROS:
         # rospy.loginfo("Received data: %s", current_Fz)
         if self.counter_ == 0:
             prev_Fz = current_Fz
-            print("prev_Fz:", prev_Fz)
+            # print("prev_Fz:", prev_Fz)
             self.counter_ +=1
         
         if self.counter == 0:
@@ -50,7 +51,7 @@ class THzROS:
         t2 = rospy.get_time()
         diff_time = t2-self.t1
         if diff_time <= self.total_time:
-            # print("THz is recording")
+            print("THz is recording: ", self.counter)
             self.output_file_force.write(str(current_Fz) + '\n')  # Write data to file
             self.output_file_force.flush()  # Flush buffer to ensure data is written immediately
             pulse_data = self.submit("GETLATESTPULSE", "d", 8*self.numpoints[0]) #array with the pulse data
