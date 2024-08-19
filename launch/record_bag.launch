@@ -1,0 +1,11 @@
+<launch>
+<arg name="file" default="test_file"/>
+
+  <node
+    pkg="tera_iiwa_ros"
+    type="record_bag.py"
+    name="record_bag"
+    output="screen" 
+    args="$(arg file)"/>
+
+</launch>

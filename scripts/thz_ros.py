@@ -2,7 +2,7 @@
 
 import rospy
 from geometry_msgs.msg import WrenchStamped
-import socket, struct, sys, time
+import socket, struct, sys, time, os
 
 class THzROS:
     def __init__(self, ip, port,base_file_name, total_time):
@@ -29,8 +29,9 @@ class THzROS:
         rospy.init_node('thz_ros', anonymous=True)
         self.data_subscriber = rospy.Subscriber('/cartesian_wrench_tool_ts', WrenchStamped, self.callback_wrench)
         self.base_file_name = base_file_name
-        self.output_file_force = open(f"/home/picobothz/Recordings/Force_{self.base_file_name}.txt", 'a')  # Open file in append mode
-        self.output_file_pulse = open(f"/home/picobothz/Recordings/Pulse_{self.base_file_name}.txt", 'a')  # Open file in append mode
+        home = os.path.expanduser("~")
+        self.output_file_force = open(home + f"/Recordings/Force/Force_{self.base_file_name}.txt", 'a')  # Open file in append mode
+        self.output_file_pulse = open(home + f"/Recordings/Pulse/Pulse_{self.base_file_name}.txt", 'a')  # Open file in append mode
         self.rate = rospy.Rate(10) #4 Hz
         self.counter = 0
         self.counter_ = 0
