@@ -12,21 +12,24 @@
 #include <dynamic_reconfigure/server.h>
 #include "tera_iiwa_ros/ForceZConfig.h"
 
-float desired_force = 4.5;
+float desired_force = 3.0;
 class ForceController{
     private:
-    double  curr_force, error_fz, dFe, dZ;
-    ros::Publisher pose_pub;
-    ros::Subscriber wrench_sub;
-    tf2::Transform transform_base_ee;
-    geometry_msgs::TransformStamped transformStamped_base_to_end;
-    geometry_msgs::TransformStamped transformStamped_goal;
-    double Kp = 1.0;
-    double Kd = 1.0;
-    double Kf = 1000.0;
-    double dt = 0.1;
-    double prev_error_fz = 0.0;
-    
+        double  curr_force, error_fz, dFe, dZ;
+        ros::Publisher pose_pub;
+        ros::Subscriber wrench_sub;
+        tf2::Transform transform_base_ee;
+        geometry_msgs::TransformStamped transformStamped_base_to_end;
+        geometry_msgs::TransformStamped transformStamped_goal;
+        double Kp = 1.0;
+        double Kd = 1.0;
+        double Kf = 1000.0;
+        double dt = 0.1;
+        double prev_error_fz = 0.0;
+        bool first_run = true;
+        double alpha = 0.9;
+        double smoothed_dFe = 0.0;
+        
     public:
     ForceController(ros::NodeHandle *nh){
       
@@ -64,10 +67,20 @@ class ForceController{
         error_fz = desired_force - abs(curr_force);
         // std::cout << "desired_force" << desired_force << std::endl;
         //  std::cout << "Fz error" << error_fz << std::endl;
+        if (first_run){
+            prev_error_fz = error_fz;
+            first_run = false;
+        }
         dFe = error_fz - prev_error_fz;
+        smoothed_dFe = alpha*smoothed_dFe + (1-alpha)*dFe;
         prev_error_fz = error_fz;
-        dZ = (Kp/Kf)*error_fz*dt + (Kd/Kf)*dFe*dt;        
+        dZ = (Kp/Kf)*error_fz*dt + (Kd/Kf)*smoothed_dFe*dt;        
         // std::cout << "dZ" << dZ << std::endl;
+        double max_dZ = 0.001;  // Maximum allowed movement per iteration
+        if (fabs(dZ) > max_dZ) {
+            dZ = copysign(max_dZ, dZ);  // Clamp the displacement
+            std::cout << "Clamped dZ" << dZ << std::endl;
+        }
         geometry_msgs::PoseStamped pose = update_pose(dZ);
         pose_pub.publish(pose);
         

@@ -12,7 +12,7 @@ int main(int argc, char **argv)
     ros::NodeHandle node;
     tf2_ros::Buffer tfBuffer;
     tf2_ros::TransformListener tfListener(tfBuffer);
-    ros::Rate rate(10.0);
+    ros::Rate rate(100.0);
     static tf2_ros::StaticTransformBroadcaster static_broadcaster;
 
 
@@ -57,13 +57,24 @@ int main(int argc, char **argv)
     transformStamped_calib.header.stamp = ros::Time::now();
     transformStamped_calib.header.frame_id = "iiwa_link_ee";
     transformStamped_calib.child_frame_id = "camera_color_optical_frame";
-    transformStamped_calib.transform.translation.x = -0.0317507; //-0.0297507
-    transformStamped_calib.transform.translation.y = -0.105022;
-    transformStamped_calib.transform.translation.z = 0.0267093;
-    transformStamped_calib.transform.rotation.x = 0;//0.00753;
-    transformStamped_calib.transform.rotation.y = 0;//-0.0057455;
-    transformStamped_calib.transform.rotation.z = 0;//0.0207761;
-    transformStamped_calib.transform.rotation.w = 1;//0.999739;  
+    // picobot version 1/2
+    // transformStamped_calib.transform.translation.x = -0.0317507; //-0.0297507
+    // transformStamped_calib.transform.translation.y = -0.105022;
+    // transformStamped_calib.transform.translation.z = 0.0267093;
+    // transformStamped_calib.transform.rotation.x = 0;//0.00753;
+    // transformStamped_calib.transform.rotation.y = 0;//-0.0057455;
+    // transformStamped_calib.transform.rotation.z = 0;//0.0207761;
+    // transformStamped_calib.transform.rotation.w = 1;//0.999739;  
+
+
+    // picobot version 3
+    transformStamped_calib.transform.translation.x = 0.03261;
+    transformStamped_calib.transform.translation.y = 0.124;//0.11688;
+    transformStamped_calib.transform.translation.z = 0.2493;
+    transformStamped_calib.transform.rotation.x = 0.0;//-0.00101;
+    transformStamped_calib.transform.rotation.y = 0.0;//0.021415;
+    transformStamped_calib.transform.rotation.z = 1.0;//0.9996;
+    transformStamped_calib.transform.rotation.w = 0.0;//-0.012117;
 
 
     tf2::Vector3 translation_calib(transformStamped_calib.transform.translation.x,
