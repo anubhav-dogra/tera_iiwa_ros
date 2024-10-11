@@ -49,7 +49,7 @@ class ForceController{
         // f = boost::bind(&ForceController::server_callback, this, _1, _2);
         // server.setCallback(f);
         pose_pub = nh->advertise<geometry_msgs::PoseStamped>("/iiwa/CartesianImpedance_trajectory_controller/reference_pose",1);
-        wrench_sub = nh->subscribe("/cartesian_wrench_tool",10, &ForceController::callback_controller, this);
+        wrench_sub = nh->subscribe("/cartesian_wrench_tool_biased",10, &ForceController::callback_controller, this);
 }
 
     // void server_callback(tera_iiwa_ros::ForceZConfig &config, uint32_t level){

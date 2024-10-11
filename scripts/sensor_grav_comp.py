@@ -5,6 +5,7 @@ import numpy as np
 from geometry_msgs.msg import WrenchStamped
 from scipy.signal import butter, filtfilt
 from tera_iiwa_ros.srv import SensorBias, SensorBiasResponse
+import copy
 
 class GravityCompensationNode:
     def __init__(self):
@@ -130,9 +131,8 @@ class GravityCompensationNode:
         self.out.wrench.torque.z    = filtered_torque[2]  - result[5]
 
         if self.first_time_biased:
-                self.wrench_for_bias = self.out
-                print("Biasing Now")
-                self.first_time_biased = False
+            self.set_bias_value()
+
         if self.set_bias:
             self.biased_wrench.header = msg.header
             self.biased_wrench.wrench.force.x     = self.out.wrench.force.x - self.wrench_for_bias.wrench.force.x
@@ -141,7 +141,6 @@ class GravityCompensationNode:
             self.biased_wrench.wrench.torque.x    = self.out.wrench.torque.x   - self.wrench_for_bias.wrench.torque.x
             self.biased_wrench.wrench.torque.y    = self.out.wrench.torque.y   - self.wrench_for_bias.wrench.torque.y
             self.biased_wrench.wrench.torque.z    = self.out.wrench.torque.z   - self.wrench_for_bias.wrench.torque.z
-            print(self.wrench_for_bias)
 
         self.out_check.header = msg.header
         self.out_check.wrench.force.x     = msg.wrench.force.x   - result[0]
@@ -151,7 +150,11 @@ class GravityCompensationNode:
         self.out_check.wrench.torque.y    = msg.wrench.torque.y  - result[4]
         self.out_check.wrench.torque.z    = msg.wrench.torque.z  - result[5]
 
-
+    def set_bias_value(self):
+        self.wrench_for_bias = copy.deepcopy(self.out)
+        self.first_time_biased=False
+        print("Bias set successfully", self.wrench_for_bias)
+        
     def publish(self):
         while not rospy.is_shutdown():
             self.pub.publish(self.out)
