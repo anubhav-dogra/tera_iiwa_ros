@@ -4,6 +4,7 @@ import tf2_ros
 import numpy as np
 from geometry_msgs.msg import WrenchStamped
 from scipy.signal import butter, filtfilt
+from tera_iiwa_ros.srv import SensorBias, SensorBiasResponse
 
 class GravityCompensationNode:
     def __init__(self):
@@ -27,7 +28,7 @@ class GravityCompensationNode:
         # Publisher for compensated wrench
         self.pub = rospy.Publisher('/cartesian_wrench_tool', WrenchStamped, queue_size=1)
         self.pub_check = rospy.Publisher('/cartesian_wrench_tool_unfiltered', WrenchStamped, queue_size=1)
-
+        self.pub_biased = rospy.Publisher('/cartesian_wrench_tool_biased', WrenchStamped, queue_size=1)
         # Subscriber for force-torque sensor data
         rospy.Subscriber('/netft_data', WrenchStamped, self.callback_)
 
@@ -46,6 +47,12 @@ class GravityCompensationNode:
         self.torque_data = []
         self.out = WrenchStamped()
         self.out_check = WrenchStamped()
+        self.biased_wrench = WrenchStamped()
+        self.wrench_for_bias = WrenchStamped()
+        self.set_bias = False
+        self.first_time_biased = False
+
+        self.service = rospy.Service('/set_sensor_bias', SensorBias, self.service_callback)
 
     def butterworth_filter(self, cutoff_frequency, sampling_rate, order):
         nyquist_frequency = 0.5 * sampling_rate
@@ -83,9 +90,9 @@ class GravityCompensationNode:
             ])
 
             # Compute the compensated wrench
-            result = F_s_g @ self.wrench_vector
+            result = -F_s_g @ self.wrench_vector
 
-            print(result) 
+            # print(result) 
         except (tf2_ros.LookupException, tf2_ros.ConnectivityException, tf2_ros.ExtrapolationException) as e:
             rospy.logerr(f"Error in lookup transform: {e}")
         # print(result)
@@ -122,6 +129,20 @@ class GravityCompensationNode:
         self.out.wrench.torque.y    = filtered_torque[1]  - result[4]
         self.out.wrench.torque.z    = filtered_torque[2]  - result[5]
 
+        if self.set_bias:
+            if self.first_time_biased:
+                self.wrench_for_bias = self.out
+                print("Biasing Now")
+                self.first_time_biased = False
+
+            self.biased_wrench.header = msg.header
+            self.biased_wrench.wrench.force.x     = filtered_force[0]  - self.wrench_for_bias.wrench.force.x
+            self.biased_wrench.wrench.force.y     = filtered_force[1]  - self.wrench_for_bias.wrench.force.y
+            self.biased_wrench.wrench.force.z     = filtered_force[2]  - self.wrench_for_bias.wrench.force.z
+            self.biased_wrench.wrench.torque.x    = filtered_torque[0]   - self.wrench_for_bias.wrench.torque.x
+            self.biased_wrench.wrench.torque.y    = filtered_torque[1]   - self.wrench_for_bias.wrench.torque.y
+            self.biased_wrench.wrench.torque.z    = filtered_torque[2]   - self.wrench_for_bias.wrench.torque.z
+
         self.out_check.header = msg.header
         self.out_check.wrench.force.x     = msg.wrench.force.x   - result[0]
         self.out_check.wrench.force.y     = msg.wrench.force.y   - result[1]
@@ -135,7 +156,17 @@ class GravityCompensationNode:
         while not rospy.is_shutdown():
             self.pub.publish(self.out)
             self.pub_check.publish(self.out_check)
+            self.pub_biased.publish(self.biased_wrench)
             self.rate.sleep()
+
+    def service_callback(self, req):
+        if req.ft_sensor_bias:
+            self.set_bias = True
+            self.first_time_biased = True
+            return SensorBiasResponse(success=True)
+        else:
+            self.set_bias = False
+            return SensorBiasResponse(success=False)
 
 if __name__ == '__main__':
     node = GravityCompensationNode()
