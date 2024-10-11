@@ -91,8 +91,8 @@ void cloud_cb(const sensor_msgs::PointCloud2ConstPtr& input)
     double roll, pitch, yaw;
     q_tf_m.getRPY(roll, pitch, yaw); 
     Eigen::Matrix3d m_ = m_; // rotation about Z 
-    m_(0,0) =  cos(-yaw), m_(0,1) = -sin(-yaw),m_(0,2) = 0;
-    m_(1,0) = sin(-yaw), m_(1,1) = cos(-yaw), m_(1,2) = 0;
+    m_(0,0) =  cos(-yaw+3.14), m_(0,1) = -sin(-yaw+3.14),m_(0,2) = 0;
+    m_(1,0) = sin(-yaw+3.14), m_(1,1) = cos(-yaw+3.14), m_(1,2) = 0;
     m_(2,0) = 0,m_(2,1) = 0,m_(2,2) = 1;
     Eigen::Matrix3d rot1 = rot*m_; // Apply Rotation
     Eigen::Quaterniond q_;

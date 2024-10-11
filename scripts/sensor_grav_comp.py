@@ -32,12 +32,12 @@ class GravityCompensationNode:
         rospy.Subscriber('/netft_data', WrenchStamped, self.callback_)
 
         # Precompute constants
-        self.Fmg = np.array([0, 0, -3.42 * 9.81065])  # Adjust force due to gravity
+        self.Fmg = np.array([0, 0, -3.43 * 9.81065])  # Adjust force due to gravity
         self.zero_vec = np.zeros(3)
         self.P_s_g = np.array([
-            [0, -0.0777, 0.003568], 
-            [0.0777, 0.0, -0.01096],
-            [-0.003568, 0.01096, 0.0]
+            [0, -0.079015, 0.00316], 
+            [0.079015, 0.0, -0.00918],
+            [-0.00316, 0.00918, 0.0]
         ])
         # Form wrench vector
         self.wrench_vector = np.hstack((self.Fmg, self.zero_vec)).reshape(6, 1)
@@ -83,9 +83,9 @@ class GravityCompensationNode:
             ])
 
             # Compute the compensated wrench
-            result = -F_s_g @ self.wrench_vector
+            result = F_s_g @ self.wrench_vector
 
-            # print(result) 
+            print(result) 
         except (tf2_ros.LookupException, tf2_ros.ConnectivityException, tf2_ros.ExtrapolationException) as e:
             rospy.logerr(f"Error in lookup transform: {e}")
         # print(result)
