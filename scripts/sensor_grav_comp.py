@@ -90,7 +90,7 @@ class GravityCompensationNode:
             ])
 
             # Compute the compensated wrench
-            result = -F_s_g @ self.wrench_vector
+            result = F_s_g @ self.wrench_vector
 
             # print(result) 
         except (tf2_ros.LookupException, tf2_ros.ConnectivityException, tf2_ros.ExtrapolationException) as e:
@@ -129,19 +129,19 @@ class GravityCompensationNode:
         self.out.wrench.torque.y    = filtered_torque[1]  - result[4]
         self.out.wrench.torque.z    = filtered_torque[2]  - result[5]
 
-        if self.set_bias:
-            if self.first_time_biased:
+        if self.first_time_biased:
                 self.wrench_for_bias = self.out
                 print("Biasing Now")
                 self.first_time_biased = False
-
+        if self.set_bias:
             self.biased_wrench.header = msg.header
-            self.biased_wrench.wrench.force.x     = filtered_force[0]  - self.wrench_for_bias.wrench.force.x
-            self.biased_wrench.wrench.force.y     = filtered_force[1]  - self.wrench_for_bias.wrench.force.y
-            self.biased_wrench.wrench.force.z     = filtered_force[2]  - self.wrench_for_bias.wrench.force.z
-            self.biased_wrench.wrench.torque.x    = filtered_torque[0]   - self.wrench_for_bias.wrench.torque.x
-            self.biased_wrench.wrench.torque.y    = filtered_torque[1]   - self.wrench_for_bias.wrench.torque.y
-            self.biased_wrench.wrench.torque.z    = filtered_torque[2]   - self.wrench_for_bias.wrench.torque.z
+            self.biased_wrench.wrench.force.x     = self.out.wrench.force.x - self.wrench_for_bias.wrench.force.x
+            self.biased_wrench.wrench.force.y     = self.out.wrench.force.y - self.wrench_for_bias.wrench.force.y
+            self.biased_wrench.wrench.force.z     = self.out.wrench.force.z - self.wrench_for_bias.wrench.force.z
+            self.biased_wrench.wrench.torque.x    = self.out.wrench.torque.x   - self.wrench_for_bias.wrench.torque.x
+            self.biased_wrench.wrench.torque.y    = self.out.wrench.torque.y   - self.wrench_for_bias.wrench.torque.y
+            self.biased_wrench.wrench.torque.z    = self.out.wrench.torque.z   - self.wrench_for_bias.wrench.torque.z
+            print(self.wrench_for_bias)
 
         self.out_check.header = msg.header
         self.out_check.wrench.force.x     = msg.wrench.force.x   - result[0]
@@ -156,7 +156,8 @@ class GravityCompensationNode:
         while not rospy.is_shutdown():
             self.pub.publish(self.out)
             self.pub_check.publish(self.out_check)
-            self.pub_biased.publish(self.biased_wrench)
+            if self.set_bias:
+                self.pub_biased.publish(self.biased_wrench)
             self.rate.sleep()
 
     def service_callback(self, req):
