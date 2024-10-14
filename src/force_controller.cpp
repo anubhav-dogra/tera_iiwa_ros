@@ -76,7 +76,7 @@ class ForceController{
         prev_error_fz = error_fz;
         dZ = (Kp/Kf)*error_fz*dt + (Kd/Kf)*smoothed_dFe*dt;        
         // std::cout << "dZ" << dZ << std::endl;
-        double max_dZ = 0.001;  // Maximum allowed movement per iteration
+        double max_dZ = 0.00025;  // Maximum allowed movement per iteration
         if (fabs(dZ) > max_dZ) {
             dZ = copysign(max_dZ, dZ);  // Clamp the displacement
             std::cout << "Clamped dZ" << dZ << std::endl;
