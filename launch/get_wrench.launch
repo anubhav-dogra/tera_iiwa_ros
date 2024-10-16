@@ -1,5 +1,5 @@
 <launch>
-  <node
+  <!-- <node
     pkg="tera_iiwa_ros"
     type="get_plot_data"
     name="get_plot_data"
@@ -9,5 +9,18 @@
     pkg="tera_iiwa_ros"
     type="wrench_transform_publisher"
     name="wrench_transform_publisher"
-    output="screen" />
+    output="screen" /> -->
+  <arg name="IP" default="192.170.10.100"/>
+  <node
+    pkg="netft_utils"
+    type="netft_node"
+    name="netft_node"
+    output="screen"
+    args="$(arg IP)"/>
+
+  <node
+    pkg="tera_iiwa_ros"
+    type="sensor_grav_comp.py"
+    name="grav_comp"
+    output="screen"  />
 </launch>
