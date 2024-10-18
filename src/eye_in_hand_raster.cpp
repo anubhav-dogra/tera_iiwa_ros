@@ -68,8 +68,8 @@ int main(int argc, char **argv)
 
 
     // picobot version 3
-    transformStamped_calib.transform.translation.x = 0.02;//0.025;//0.03261;
-    transformStamped_calib.transform.translation.y = 0.1425;//0.11688;
+    transformStamped_calib.transform.translation.x = 0.025;//0.03261;
+    transformStamped_calib.transform.translation.y = 0.136;//0.1425;//0.11688;
     transformStamped_calib.transform.translation.z = 0.2493;
     transformStamped_calib.transform.rotation.x = 0.0;//-0.00101;
     transformStamped_calib.transform.rotation.y = 0.0;//0.021415;
