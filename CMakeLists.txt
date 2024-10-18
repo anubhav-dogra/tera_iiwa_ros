@@ -182,6 +182,7 @@ include_directories(
  add_executable(target_to_base src/target_to_base.cpp)
  add_executable(array_test src/array_test.cpp)
  add_executable(send_target_pose src/send_target_pose.cpp)
+ add_executable(contact_force_controller src/contact_force_controller.cpp)
  
  add_dependencies(get_plot_data ${catkin_EXPORTED_TARGETS})
  add_dependencies(plan_send_cartesian_commands ${catkin_EXPORTED_TARGETS})
@@ -200,6 +201,7 @@ include_directories(
  add_dependencies(array_test ${catkin_EXPORTED_TARGETS})
  add_dependencies(send_target_pose ${catkin_EXPORTED_TARGETS})
  add_dependencies(force_controller ${PROJECT_NAME}_gencfg)
+ add_dependencies(contact_force_controller ${PROJECT_NAME}_gencfg ${catkin_EXPORTED_TARGETS})
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
 ## target back to the shorter version for ease of user use
@@ -227,6 +229,7 @@ include_directories(
  target_link_libraries(target_to_base ${catkin_LIBRARIES})
  target_link_libraries(array_test ${catkin_LIBRARIES})
  target_link_libraries(send_target_pose ${catkin_LIBRARIES})
+ target_link_libraries(contact_force_controller ${catkin_LIBRARIES})
 #  target_link_libraries(iiwa14_rs_tool_manipulator_ikfast_plugin ${catkin_LIBRARIES})
 
 #############
