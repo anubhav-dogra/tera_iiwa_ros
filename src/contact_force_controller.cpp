@@ -32,8 +32,8 @@ class ForceController{
         bool first_run = true;
         double alpha = 0.9;
         double smoothed_dFe = 0.0;
-        double Kp_orientation_x = 1/Kf;
-        double Kp_orientation_y = 1/Kf;
+        double Kp_orientation_x = 10/Kf;
+        double Kp_orientation_y = 10/Kf;
         double Kd_orientation = 0.1/Kf;
         tf2::Quaternion previous_quat;
         tf2::Quaternion new_quat;
@@ -69,7 +69,7 @@ class ForceController{
 
         error_fz = desired_force - abs(curr_force_z);
         double roll_error = curr_force_x;
-        double pitch_error = -curr_force_y;
+        double pitch_error = curr_force_y;
 
         if (first_run)
         {
@@ -99,8 +99,8 @@ class ForceController{
                 dZ = copysign(max_dZ, dZ);  // Clamp the displacement
                 // std::cout << "Clamping dZ to " << dZ << std::endl;
             }
-            // double dRoll = Kp_orientation_x * roll_error + Kd_orientation * error_d_pitch + Kp_orientation_x *(0-torque_x);
-            // double dPitch = Kp_orientation_y * pitch_error + Kd_orientation * error_d_roll + Kp_orientation_y * (0-torque_y);
+            // double dRoll = Kp_orientation_x * roll_error + Kd_orientation * error_d_pitch + Kp_orientation_x *(0-curr_torque_x);
+            // double dPitch = Kp_orientation_y * pitch_error + Kd_orientation * error_d_roll + Kp_orientation_y * (0-curr_torque_y);
             double dRoll = Kp_orientation_x*roll_error;
             double dPitch = Kp_orientation_y*pitch_error;
             double max_dRoll = 0.0001;  // Maximum allowed movement per iteration
