@@ -32,9 +32,11 @@ class ForceController{
         bool first_run = true;
         double alpha = 0.9;
         double smoothed_dFe = 0.0;
+        double smoothed_drolle=0.0;
+        double smoothed_dpitche=0.0;
         double Kp_orientation_x = 5/Kf;
         double Kp_orientation_y = 5/Kf;
-        double Kd_orientation = 0.5/Kf;    
+        double Kd_orientation = 0.01/Kf;    
         tf2::Quaternion previous_quat;
         tf2::Quaternion new_quat;
         ros::Time current_time, previous_time;
@@ -95,6 +97,8 @@ class ForceController{
             prev_error_roll = roll_error;
             prev_error_pitch = pitch_error;
             smoothed_dFe = alpha*smoothed_dFe + (1-alpha)*dFe;
+            smoothed_drolle = alpha*smoothed_drolle + (1-alpha)*error_d_roll;
+            smoothed_dpitche = alpha*smoothed_dpitche + (1-alpha)*error_d_pitch;
 
             dZ = Kp*error_fz + Kd*smoothed_dFe;
             double max_dZ = 0.00025;  // Maximum allowed movement per iteration
@@ -104,8 +108,8 @@ class ForceController{
             }
             // double dRoll = Kp_orientation_x * roll_error + Kd_orientation * error_d_pitch + Kp_orientation_x *(0-curr_torque_x);
             // double dPitch = Kp_orientation_y * pitch_error + Kd_orientation * error_d_roll + Kp_orientation_y * (0-curr_torque_y);
-            double dRoll = Kp_orientation_x*roll_error + Kd_orientation * error_d_roll; //+ Kp_orientation_x * curr_torque_x;
-            double dPitch = Kp_orientation_y*pitch_error + Kd_orientation * error_d_pitch;// + Kp_orientation_y *-curr_torque_y;
+            double dRoll = Kp_orientation_x*roll_error + Kd_orientation * smoothed_drolle; //+ Kp_orientation_x * curr_torque_x;
+            double dPitch = Kp_orientation_y*pitch_error + Kd_orientation * smoothed_dpitche;// + Kp_orientation_y *-curr_torque_y;
             double max_dRoll = 0.001;  // Maximum allowed movement per iteration
             double max_dPitch = 0.001;  // Maximum allowed movement per iteration
 
