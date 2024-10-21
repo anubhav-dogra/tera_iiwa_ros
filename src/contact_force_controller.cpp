@@ -19,6 +19,7 @@ class ForceController{
         double curr_force_z=0.0, curr_force_x=0.0, curr_force_y=0.0, curr_torque_x=0.0, curr_torque_y=0.0, curr_torque_z=0.0;
         double prev_error_roll=0.0, prev_error_pitch=0.0, error_d_roll=0.0, error_d_pitch=0.0;
         ros::Publisher pose_pub;
+        ros::Publisher pub_check;
         ros::Subscriber wrench_sub;
         tf2::Transform transform_base_ee;
         geometry_msgs::TransformStamped transformStamped_base_to_end;
@@ -34,9 +35,10 @@ class ForceController{
         double smoothed_dFe = 0.0;
         double smoothed_drolle=0.0;
         double smoothed_dpitche=0.0;
-        double Kp_orientation_x = 5/Kf;
-        double Kp_orientation_y = 5/Kf;
-        double Kd_orientation = 0.01/Kf;    
+        double Kp_orientation_x = 1.0/Kf;
+        double Kp_orientation_y = 1.0/Kf;
+        double Kd_orientation = 0.01/Kf;
+        double set_value = 0.0;    
         tf2::Quaternion previous_quat;
         tf2::Quaternion new_quat;
         ros::Time current_time, previous_time;
@@ -59,6 +61,7 @@ class ForceController{
         tf2::convert(transformStamped_base_to_end.transform.rotation, previous_quat);
         previous_quat.normalize();
         pose_pub = nh->advertise<geometry_msgs::PoseStamped>("/iiwa/CartesianImpedance_trajectory_controller/reference_pose",1);
+        pub_check = nh->advertise<geometry_msgs::PoseStamped>("pose_check",1);
         wrench_sub = nh->subscribe("/cartesian_wrench_tool_biased",10, &ForceController::callback_controller, this);
 }
     void callback_controller(const geometry_msgs::WrenchStamped::ConstPtr& force_msg){
@@ -147,7 +150,18 @@ class ForceController{
         // std::cout << "prev_z" << transformStamped_goal.transform.translation.z << std::endl;
         transformStamped_goal.transform.translation.x = 0.0;
         transformStamped_goal.transform.translation.y = 0.0;
+        // if (abs(error_fz) < 0.01)
+        // {
+        //     std::cout << error_fz << std::endl;
+        //     transformStamped_goal.transform.translation.z = set_value;
+        //     std::cout <<"not changing z" << current_time <<std::endl;
+        // }
+        // else
+        // {
         transformStamped_goal.transform.translation.z += dZ;
+        // set_value = transformStamped_goal.transform.translation.z;
+        // }
+        
         // transformStamped_goal.transform.rotation.x = 0;
         // transformStamped_goal.transform.rotation.y = 0;
         // transformStamped_goal.transform.rotation.z = 0;
@@ -193,7 +207,21 @@ class ForceController{
         // pose_got.pose.orientation.w = static_transform_goal_base.transform.rotation.w;
         // std::cout << pose_got << std::endl;
         previous_quat = new_quat;
+
+        // check pose
+        // geometry_msgs::PoseStamped pose_check;
+        // pose_check.header.frame_id="world";
+        // pose_check.header.stamp = ros::Time::now();
+        // pose_check.pose.position.x = static_transform_goal_base.transform.translation.x;
+        // pose_check.pose.position.y = static_transform_goal_base.transform.translation.y;
+        // pose_check.pose.position.z = static_transform_goal_base.transform.translation.z;
+        // pose_check.pose.orientation.x = static_transform_goal_base.transform.rotation.x;
+        // pose_check.pose.orientation  = tf2::toMsg(new_quat);
+
+        // pub_check.publish(pose_check);
+
         return pose_got;
+
         
 
 
