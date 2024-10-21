@@ -16,7 +16,7 @@ float desired_force = 3.0;
 class ForceController{
     private:
         double curr_force=0.0, error_fz=0.0, dFe=0.0, dZ=0.0;
-        double curr_force_z=0.0, curr_force_x=0.0, curr_force_y=0.0, curr_torque_x=0.0, curr_torque_y=0.0;
+        double curr_force_z=0.0, curr_force_x=0.0, curr_force_y=0.0, curr_torque_x=0.0, curr_torque_y=0.0, curr_torque_z=0.0;
         double prev_error_roll=0.0, prev_error_pitch=0.0, error_d_roll=0.0, error_d_pitch=0.0;
         ros::Publisher pose_pub;
         ros::Subscriber wrench_sub;
@@ -32,9 +32,9 @@ class ForceController{
         bool first_run = true;
         double alpha = 0.9;
         double smoothed_dFe = 0.0;
-        double Kp_orientation_x = 10/Kf;
-        double Kp_orientation_y = 10/Kf;
-        double Kd_orientation = 0.1/Kf;
+        double Kp_orientation_x = 5/Kf;
+        double Kp_orientation_y = 5/Kf;
+        double Kd_orientation = 0.5/Kf;    
         tf2::Quaternion previous_quat;
         tf2::Quaternion new_quat;
         ros::Time current_time, previous_time;
@@ -66,10 +66,13 @@ class ForceController{
         curr_force_y = force_msg->wrench.force.y;
         curr_torque_x = force_msg->wrench.torque.x;
         curr_torque_y = force_msg->wrench.torque.y;
+        curr_torque_z = force_msg->wrench.torque.z;
 
         error_fz = desired_force - abs(curr_force_z);
-        double roll_error = curr_force_x;
+        double roll_error = -curr_force_x;
         double pitch_error = curr_force_y;
+        // double roll_error = -curr_torque_x;
+        // double pitch_error = curr_torque_y;
 
         if (first_run)
         {
@@ -101,16 +104,18 @@ class ForceController{
             }
             // double dRoll = Kp_orientation_x * roll_error + Kd_orientation * error_d_pitch + Kp_orientation_x *(0-curr_torque_x);
             // double dPitch = Kp_orientation_y * pitch_error + Kd_orientation * error_d_roll + Kp_orientation_y * (0-curr_torque_y);
-            double dRoll = Kp_orientation_x*roll_error;
-            double dPitch = Kp_orientation_y*pitch_error;
-            double max_dRoll = 0.0001;  // Maximum allowed movement per iteration
-            double max_dPitch = 0.0001;  // Maximum allowed movement per iteration
+            double dRoll = Kp_orientation_x*roll_error + Kd_orientation * error_d_roll; //+ Kp_orientation_x * curr_torque_x;
+            double dPitch = Kp_orientation_y*pitch_error + Kd_orientation * error_d_pitch;// + Kp_orientation_y *-curr_torque_y;
+            double max_dRoll = 0.001;  // Maximum allowed movement per iteration
+            double max_dPitch = 0.001;  // Maximum allowed movement per iteration
 
             if (fabs(dRoll) > max_dRoll) {
                 dRoll = copysign(max_dRoll, dRoll);  // Clamp the displacement
+                std::cout << "Clamping dRoll "<< std::endl;
             }
             if (fabs(dPitch) > max_dPitch) {
                 dPitch = copysign(max_dPitch, dPitch);  // Clamp the displacement
+                std::cout << "Clamping dPitch "<< std::endl;
             }
 
             geometry_msgs::PoseStamped pose = update_pose(dZ, dRoll, dPitch);
