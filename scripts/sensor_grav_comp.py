@@ -34,12 +34,19 @@ class GravityCompensationNode:
         rospy.Subscriber('/netft_data', WrenchStamped, self.callback_)
 
         # Precompute constants
-        self.Fmg = np.array([0, 0, -3.43 * 9.81065])  # Adjust force due to gravity
+        mass = 3.5015
+        com = np.array([0.0181, -0.000115, 0.08016])
+        self.Fmg = np.array([0, 0, -mass * 9.81065])  # Adjust force due to gravity
         self.zero_vec = np.zeros(3)
+        # self.P_s_g = np.array([
+        #     [0, -0.079015, 0.00316], 
+        #     [0.079015, 0.0, -0.00918],
+        #     [-0.00316, 0.00918, 0.0]
+        # ])
         self.P_s_g = np.array([
-            [0, -0.079015, 0.00316], 
-            [0.079015, 0.0, -0.00918],
-            [-0.00316, 0.00918, 0.0]
+            [0, -com[2], com[1]], 
+            [com[2], 0.0, -com[0]],
+            [-com[1], com[0], 0.0]
         ])
         # Form wrench vector
         self.wrench_vector = np.hstack((self.Fmg, self.zero_vec)).reshape(6, 1)
