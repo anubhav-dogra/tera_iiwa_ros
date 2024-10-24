@@ -45,7 +45,11 @@ F = np.array([
             [31.68, -0.0046, 0.930],
             [-3.27, 35.099, 0.0986]
             ])
+# calculated by taking mean in two opposite direction for each force and torques. 
+F_bias = np.array([-3.15, 0.1867, 0.8952])
+T_bias = np.array([0.0918, -0.0558, -0.0525])
 
+F = F-F_bias
 F = F.reshape(-1).T
 
 Torques = np.array([
@@ -60,6 +64,7 @@ Torques = np.array([
             [0.0738, 2.6319, -0.0258],
             [-2.71, 0.0168, 0.84262]
             ])
+Torques = Torques-T_bias
 Torques = Torques.reshape(-1).T
 
 mass = (G.T@ F)/(G.T @ G)

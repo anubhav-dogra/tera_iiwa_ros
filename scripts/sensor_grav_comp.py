@@ -34,8 +34,10 @@ class GravityCompensationNode:
         rospy.Subscriber('/netft_data', WrenchStamped, self.callback_)
 
         # Precompute constants
-        mass = 3.5015
-        com = np.array([0.0181, -0.000115, 0.08016])
+        self.F_bias = np.array([-3.15, 0.1867, 0.8952])
+        self.T_bias = np.array([0.0918, -0.0558, -0.0525])
+        mass = 3.5245
+        com = np.array([0.0178, -0.0008, 0.0798])
         self.Fmg = np.array([0, 0, -mass * 9.81065])  # Adjust force due to gravity
         self.zero_vec = np.zeros(3)
         # self.P_s_g = np.array([
@@ -130,12 +132,12 @@ class GravityCompensationNode:
         result = self.get_gravity_wrench()
 
         self.out.header = msg.header
-        self.out.wrench.force.x     = filtered_force[0]   - result[0]
-        self.out.wrench.force.y     = filtered_force[1]   - result[1]
-        self.out.wrench.force.z     = filtered_force[2]   - result[2]
-        self.out.wrench.torque.x    = filtered_torque[0]  - result[3]
-        self.out.wrench.torque.y    = filtered_torque[1]  - result[4]
-        self.out.wrench.torque.z    = filtered_torque[2]  - result[5]
+        self.out.wrench.force.x     = filtered_force[0]   - result[0] - self.F_bias[0] 
+        self.out.wrench.force.y     = filtered_force[1]   - result[1] - self.F_bias[1]
+        self.out.wrench.force.z     = filtered_force[2]   - result[2] - self.F_bias[2]
+        self.out.wrench.torque.x    = filtered_torque[0]  - result[3] - self.T_bias[0]
+        self.out.wrench.torque.y    = filtered_torque[1]  - result[4] - self.T_bias[1]
+        self.out.wrench.torque.z    = filtered_torque[2]  - result[5] - self.T_bias[2]
 
         if self.first_time_biased:
             self.set_bias_value()
