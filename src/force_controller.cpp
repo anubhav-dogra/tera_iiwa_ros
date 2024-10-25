@@ -136,9 +136,9 @@ class ForceController{
                                 + pow(goal_translation.z - end_translation.z,2));
         
        
-        if (distance > 0.025) {
-            // Perform action if the distance is more than 2.5 cm
-            ROS_WARN("Distance from start is greater than 2.5 cm.");
+        if (distance > 0.06) {
+            // Perform action if the distance is more than 6 cm
+            ROS_WARN("Distance from start is greater than 6 cm.");
             return pose_got; // previously saved pose goat
         }
         else {
