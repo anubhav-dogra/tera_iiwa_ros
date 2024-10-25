@@ -29,6 +29,7 @@ class ForceController{
         bool first_run = true;
         double alpha = 0.9;
         double smoothed_dFe = 0.0;
+        geometry_msgs::PoseStamped pose_got;
         
     public:
     ForceController(ros::NodeHandle *nh){
@@ -127,18 +128,33 @@ class ForceController{
         static_transform_goal_base.child_frame_id = "goal_frame";
         static_transform_goal_base.transform = tf2::toMsg(transformed_goal_base);
 
-        geometry_msgs::PoseStamped pose_got;
-        pose_got.header.frame_id="world";
-        pose_got.header.stamp = ros::Time::now();
-        pose_got.pose.position.x = static_transform_goal_base.transform.translation.x;
-        pose_got.pose.position.y = static_transform_goal_base.transform.translation.y;
-        pose_got.pose.position.z = static_transform_goal_base.transform.translation.z;
-        pose_got.pose.orientation.x = static_transform_goal_base.transform.rotation.x;
-        pose_got.pose.orientation.y = static_transform_goal_base.transform.rotation.y;
-        pose_got.pose.orientation.z = static_transform_goal_base.transform.rotation.z;
-        pose_got.pose.orientation.w = static_transform_goal_base.transform.rotation.w;
-        // std::cout << pose_got << std::endl;
-        return pose_got;
+        // check distance
+        geometry_msgs::Vector3 goal_translation = static_transform_goal_base.transform.translation;
+        geometry_msgs::Vector3 end_translation = transformStamped_base_to_end.transform.translation;
+        double distance = sqrt(pow(goal_translation.x - end_translation.x,2)
+                                + pow(goal_translation.y - end_translation.y,2)
+                                + pow(goal_translation.z - end_translation.z,2));
+        
+       
+        if (distance > 0.025) {
+            // Perform action if the distance is more than 2.5 cm
+            ROS_WARN("Distance from start is greater than 2.5 cm.");
+            return pose_got; // previously saved pose goat
+        }
+        else {
+            pose_got.header.frame_id="world";
+            pose_got.header.stamp = ros::Time::now();
+            pose_got.pose.position.x = static_transform_goal_base.transform.translation.x;
+            pose_got.pose.position.y = static_transform_goal_base.transform.translation.y;
+            pose_got.pose.position.z = static_transform_goal_base.transform.translation.z;
+            pose_got.pose.orientation.x = static_transform_goal_base.transform.rotation.x;
+            pose_got.pose.orientation.y = static_transform_goal_base.transform.rotation.y;
+            pose_got.pose.orientation.z = static_transform_goal_base.transform.rotation.z;
+            pose_got.pose.orientation.w = static_transform_goal_base.transform.rotation.w;
+            // std::cout << pose_got << std::endl;
+
+            return pose_got;
+        }
         
 
 
