@@ -23,4 +23,11 @@
     type="sensor_grav_comp.py"
     name="grav_comp"
     output="screen"  />
+
+    <node
+      pkg="tera_iiwa_ros"
+      type="tf_force_wrt_THz"
+      name="tf_force_wrt_THz"
+      output="screen"/>
+      
 </launch>

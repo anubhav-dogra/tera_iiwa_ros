@@ -12,7 +12,7 @@ class RecordBag:
         self.bag = rosbag.Bag(home + '/Recordings/bags/' +  filename, 'w')
         
         self.ee_pose_message_filter = message_filters.Subscriber('/tool_link_ee_pose', TransformStamped)
-        self.wrench_tool_message_filter = message_filters.Subscriber('/cartesian_wrench_tool', WrenchStamped)
+        self.wrench_tool_message_filter = message_filters.Subscriber('/cartesian_wrench_tool_ts', WrenchStamped)
         self.ts = message_filters.ApproximateTimeSynchronizer([self.ee_pose_message_filter, self.wrench_tool_message_filter], 10, 0.1, allow_headerless=True)
         self.ts.registerCallback(self.record_callback)
         # self.ee_pose_sub = rospy.Subscriber('/tool_link_ee_pose', TransformStamped, self.ee_pose_callback, queue_size=10)

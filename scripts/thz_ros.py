@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 
 import rospy
-from geometry_msgs.msg import WrenchStamped
+from geometry_msgs.msg import WrenchStamped, TransformStamped
 import socket, struct, sys, time, os
+import message_filters
 
 class THzROS:
     def __init__(self, ip, port,base_file_name, total_time):
@@ -27,17 +28,23 @@ class THzROS:
         self.time_axis = self.submit("GETTIMEAXIS", "d", time_axis_bytes) #array with the time data
          
         rospy.init_node('thz_ros', anonymous=True)
-        self.data_subscriber = rospy.Subscriber('/cartesian_wrench_tool_ts', WrenchStamped, self.callback_wrench)
+        # self.data_subscriber = rospy.Subscriber('/cartesian_wrench_tool_ts', WrenchStamped, self.callback_wrench)
+        self.ee_pose_message_filter = message_filters.Subscriber('/tool_link_ee_pose', TransformStamped)
+        self.wrench_tool_message_filter = message_filters.Subscriber('/cartesian_wrench_tool_ts', WrenchStamped)
+        self.ts = message_filters.ApproximateTimeSynchronizer([self.ee_pose_message_filter, self.wrench_tool_message_filter], 10, 0.1, allow_headerless=True)
+        self.ts.registerCallback(self.record_callback)
         self.base_file_name = base_file_name
         home = os.path.expanduser("~")
         self.output_file_force = open(home + f"/Recordings/Force/Force_{self.base_file_name}.txt", 'a')  # Open file in append mode
         self.output_file_pulse = open(home + f"/Recordings/Pulse/Pulse_{self.base_file_name}.txt", 'a')  # Open file in append mode
+        self.output_file_position = open(home + f"/Recordings/Position/Position_{self.base_file_name}.txt", 'a')  # Open file in append mode
         self.rate = rospy.Rate(10) #4 Hz
         self.counter = 0
         self.counter_ = 0
 
-    def callback_wrench(self, data):
-        current_Fz = data.wrench.force.z
+    def record_callback(self, data1, data2):
+        current_Fz = data2.wrench.force.z
+        current_pose_z = data1.transform.translation.z
         # rospy.loginfo("Received data: %s", current_Fz)
         if self.counter_ == 0:
             prev_Fz = current_Fz
@@ -55,6 +62,8 @@ class THzROS:
             print("THz is recording: ", self.counter)
             self.output_file_force.write(str(current_Fz) + '\n')  # Write data to file
             self.output_file_force.flush()  # Flush buffer to ensure data is written immediately
+            self.output_file_position.write(str(current_pose_z) + '\n')  # Write data to file
+            self.output_file_position.flush()  # Flush buffer to ensure data is written immediately
             pulse_data = self.submit("GETLATESTPULSE", "d", 8*self.numpoints[0]) #array with the pulse data
             # print("size",sys.getsizeof(pulse_data))
             # print("counter",self.counter)
@@ -79,6 +88,7 @@ class THzROS:
         # self.disconnect()
         self.output_file_force.close()  # Close file when the node is terminated
         self.output_file_pulse.close()
+        self.output_file_position.close()
         
     def submit(self,command, type_id, n_bit):
         sock = socket.socket()
